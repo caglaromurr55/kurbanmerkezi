@@ -87,17 +87,27 @@ export default async function AnimalsPage() {
                         {currentSharesCount > 0 && (
                             <div className="flex flex-col gap-1.5 mt-2 bg-slate-50/50 p-3 rounded-lg border border-slate-100/50">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Kayıtlı Hissedarlar</span>
-                                {animal.shares.map((share: any, idx: number) => (
-                                    <div key={share.id} className="flex items-center justify-between group/share py-0.5">
+                                {animal.shares.map((share: any, idx: number) => {
+                                    const paymentColor = share.payment_status === 'PAID' ? 'text-emerald-600' : share.payment_status === 'PARTIAL' ? 'text-amber-500' : 'text-rose-600';
+                                    return (
+                                    <div key={share.id} className="flex items-center justify-between group/share py-0.5 border-b border-slate-100/50 last:border-0">
                                         <div className="flex items-center gap-2">
                                             <span className="text-xs font-bold text-slate-400">{idx + 1}.</span>
-                                            <span className="text-sm font-semibold text-slate-700 truncate max-w-[120px]">{share.donor_name}</span>
+                                            <div className="flex flex-col">
+                                                <span className={`text-sm font-extrabold truncate max-w-[130px] ${paymentColor}`}>{share.donor_name}</span>
+                                                {(share.reference_name || share.share_type) && (
+                                                    <span className="text-[10px] text-slate-500 font-semibold truncate max-w-[130px]">
+                                                        {share.reference_name ? share.reference_name : (share.share_type === 'BAGIS' ? 'Bağış' : share.share_type === 'ADAK' ? 'Adak' : share.share_type === 'AKIKA' ? 'Akika' : 'Normal')}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                         <div className="opacity-0 group-hover/share:opacity-100 transition-opacity">
                                             <EditShareDialog share={share} />
                                         </div>
                                     </div>
-                                ))}
+                                    )
+                                })}
                             </div>
                         )}
 

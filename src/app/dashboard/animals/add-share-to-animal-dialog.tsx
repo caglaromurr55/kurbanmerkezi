@@ -45,8 +45,8 @@ export function AddShareToAnimalDialog({ campaignId, animalId, animalTag, animal
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={
-        <Button size="sm" variant="outline" className="w-full text-xs shadow-sm bg-white hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200">
-          <PlusCircle className="mr-2 h-3.5 w-3.5" /> Hisse Sahibi Ekle
+        <Button size="sm" variant="outline" className="w-full text-xs shadow-md bg-white hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 font-extrabold uppercase tracking-wider transition-all duration-300">
+          <PlusCircle className="mr-2 h-4 w-4" /> Hisse Sahibi Ekle
         </Button>
       } />
       <DialogContent className="sm:max-w-[600px] h-[90vh] sm:h-auto overflow-hidden flex flex-col">
@@ -73,7 +73,7 @@ export function AddShareToAnimalDialog({ campaignId, animalId, animalTag, animal
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="donor_phone">Telefon Numarası</Label>
-                  <Input id="donor_phone" name="donor_phone" placeholder="+905551234567" required />
+                  <Input id="donor_phone" name="donor_phone" placeholder="+905551234567" />
                 </div>
               </div>
 

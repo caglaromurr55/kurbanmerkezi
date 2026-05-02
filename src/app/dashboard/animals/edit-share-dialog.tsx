@@ -74,15 +74,15 @@ export function EditShareDialog({ share }: { share: any }) {
                   <div className="grid gap-2">
                     <Label htmlFor="donor_name" className="text-slate-600">Bağışçı Adı Soyadı</Label>
                     <div className="relative">
-                      <User className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                      <User className="absolute left-3 top-2 h-4 w-4 text-slate-400" />
                       <Input id="donor_name" name="donor_name" defaultValue={share.donor_name} className="pl-9 bg-slate-50/50" required />
                     </div>
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="donor_phone" className="text-slate-600">Telefon Numarası</Label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                      <Input id="donor_phone" name="donor_phone" defaultValue={share.donor_phone} className="pl-9 bg-slate-50/50" required />
+                      <Phone className="absolute left-3 top-2 h-4 w-4 text-slate-400" />
+                      <Input id="donor_phone" name="donor_phone" defaultValue={share.donor_phone} className="pl-9 bg-slate-50/50" />
                     </div>
                   </div>
                 </div>
@@ -138,7 +138,7 @@ export function EditShareDialog({ share }: { share: any }) {
                   <h3 className="font-semibold text-slate-800">Finansal Tahsilat</h3>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="currency" className="text-slate-600">Para Birimi</Label>
                     <Select name="currency" value={currency} onValueChange={(val) => setCurrency(val || '')} required>
@@ -152,16 +152,14 @@ export function EditShareDialog({ share }: { share: any }) {
                       </SelectContent>
                     </Select>
                   </div>
-                  {isForeign ? (
-                      <div className="grid gap-2 sm:col-span-2">
+                  {isForeign && (
+                      <div className="grid gap-2">
                         <Label htmlFor="exchange_rate" className="text-slate-600">Anlık Kur (1 {currency} = ? TL)</Label>
                         <div className="relative">
-                          <ArrowRightLeft className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                          <ArrowRightLeft className="absolute left-3 top-2 h-4 w-4 text-slate-400" />
                           <Input id="exchange_rate" name="exchange_rate" type="number" step="0.0001" defaultValue={share.exchange_rate} className="pl-9 bg-slate-50/50" required />
                         </div>
                       </div>
-                  ) : (
-                      <div className="hidden sm:block sm:col-span-2"></div>
                   )}
                 </div>
 
@@ -169,14 +167,14 @@ export function EditShareDialog({ share }: { share: any }) {
                   <div className="grid gap-2 p-3 bg-emerald-50/50 border border-emerald-100 rounded-md">
                     <Label htmlFor="sale_price" className="text-emerald-800">Satış (Tahsilat) Rakamı</Label>
                     <div className="relative">
-                      <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-emerald-500" />
+                      <DollarSign className="absolute left-3 top-2 h-4 w-4 text-emerald-500" />
                       <Input id="sale_price" name="sale_price" type="number" step="0.01" defaultValue={share.sale_price} required className="pl-9 bg-white border-emerald-200 focus-visible:ring-emerald-300 font-semibold" />
                     </div>
                   </div>
                   <div className="grid gap-2 p-3 bg-slate-50/80 border border-slate-200 rounded-md">
                     <Label htmlFor="cost_price" className="text-slate-700">Dernek Maliyeti</Label>
                     <div className="relative">
-                      <Wallet className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                      <Wallet className="absolute left-3 top-2 h-4 w-4 text-slate-400" />
                       <Input id="cost_price" name="cost_price" type="number" step="0.01" defaultValue={share.cost_price} required className="pl-9 bg-white" />
                     </div>
                   </div>

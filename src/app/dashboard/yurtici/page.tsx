@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Beef, Users, CheckCircle2, TrendingUp, HandCoins, ArrowRight, ArrowRightCircle, Clock, Scissors, Tag } from 'lucide-react'
 import Link from 'next/link'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ExportExcelButton } from '@/components/export-excel-button'
 
 export default async function YurticiDashboardPage() {
   const supabase = await createClient()
@@ -27,7 +28,7 @@ export default async function YurticiDashboardPage() {
     completedCount = cCount || 0
 
     // Finansal Veriler (Sadece Yurtiçi)
-    const { data: allShares } = await supabase.from('shares').select('sale_price, cost_price, exchange_rate, payment_status, region').eq('campaign_id', activeCampaign.id).eq('region', 'YURTICI')
+    const { data: allShares } = await supabase.from('shares').select('*').eq('campaign_id', activeCampaign.id).eq('region', 'YURTICI').order('created_at', { ascending: false })
     
     if (allShares) {
       allShares.forEach(s => {
@@ -51,11 +52,18 @@ export default async function YurticiDashboardPage() {
 
   return (
     <div className="flex flex-col gap-8 animate-fade-in py-4">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 border-l-4 border-emerald-500 pl-3">Yurtiçi Operasyon Panosu</h1>
-        <p className="text-slate-500 font-medium pl-4">
-          {activeCampaign ? `'${activeCampaign.name}' dönemi yurtiçi kestiğimiz kurbanlar ve hisseler.` : 'Sistemde aktif bir dönem bulunmuyor.'}
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 border-l-4 border-emerald-500 pl-3">Yurtiçi Operasyon Panosu</h1>
+          <p className="text-slate-500 font-medium pl-4">
+            {activeCampaign ? `'${activeCampaign.name}' dönemi yurtiçi kestiğimiz kurbanlar ve hisseler.` : 'Sistemde aktif bir dönem bulunmuyor.'}
+          </p>
+        </div>
+        {activeCampaign && allShares && (
+          <div className="flex-shrink-0">
+             <ExportExcelButton data={allShares} filename="yurtici_satis_raporu.csv" />
+          </div>
+        )}
       </div>
 
       {/* Hızlı Erişim Menüsü */}

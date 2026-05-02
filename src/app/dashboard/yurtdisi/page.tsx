@@ -9,74 +9,135 @@ import { EditShareDialog } from '@/app/dashboard/animals/edit-share-dialog'
 import { YurtdisiSettingsDialog } from './yurtdisi-settings-dialog'
 import { AddPaymentDialog } from '@/app/dashboard/shares/add-payment-dialog'
 import { ListFilters } from '@/components/list-filters'
+import { ExportExcelButton } from '@/components/export-excel-button'
 
 function SharesTable({ shares }: { shares: any[] }) {
   return (
-    <div className="glass-card rounded-[20px] overflow-x-auto w-full mt-6">
-      <Table>
-        <TableHeader className="bg-slate-50/80">
-          <TableRow className="hover:bg-transparent">
-            <TableHead className="font-bold text-slate-700">Bağışçı Adı</TableHead>
-            <TableHead className="font-bold text-slate-700">Telefon</TableHead>
-            <TableHead className="font-bold text-slate-700">Bağış Tipi</TableHead>
-            <TableHead className="font-bold text-slate-700">Bakiye & Durum</TableHead>
-            <TableHead className="font-bold text-slate-700 text-right">İşlem</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {shares.map((share) => (
-            <TableRow key={share.id} className="hover:bg-slate-50/50 transition-colors group cursor-default">
-              <TableCell className="font-semibold text-slate-800 group-hover:text-primary transition-colors">
-                {share.donor_name}
-              </TableCell>
-              <TableCell className="text-slate-500 font-medium tracking-wide">
-                {share.donor_phone}
-              </TableCell>
-              <TableCell>
-                  <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded text-[11px] font-bold">
-                    {share.share_type === 'BAGIS' ? 'Yurtdışı Bağış' : share.share_type}
-                  </span>
-              </TableCell>
-              <TableCell className="w-[180px]">
-                  <div className="flex flex-col gap-1 bg-slate-50/50 p-2 rounded-lg border border-slate-100/50">
-                      <div className="flex items-center justify-between text-xs">
-                         <span className="text-slate-500 font-medium">Satış Tutarı:</span>
-                         <span className="font-bold text-slate-700">{share.sale_price || 0} {share.currency}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs">
-                         <span className="text-slate-500 font-medium">Ödenen:</span>
-                         <span className="font-bold text-emerald-600">{share.total_paid || 0} {share.currency}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs border-t border-slate-200 pt-1 mt-0.5">
-                         <span className="text-slate-500 font-medium">Kalan Bakiye:</span>
-                         <span className={`font-bold ${(Number(share.sale_price || 0) - Number(share.total_paid || 0)) > 0 ? 'text-rose-600' : 'text-slate-400'}`}>
-                            {Math.max(0, Number(share.sale_price || 0) - Number(share.total_paid || 0))} {share.currency}
-                         </span>
-                      </div>
-                      <div className="mt-1 flex justify-end">
-                        {share.payment_status === 'PAID' && <span className="text-[10px] text-emerald-600 font-extrabold uppercase bg-emerald-100 px-2 py-0.5 rounded-full">ÖDENDİ</span>}
-                        {share.payment_status === 'PARTIAL' && <span className="text-[10px] text-amber-600 font-extrabold uppercase bg-amber-100 px-2 py-0.5 rounded-full">KISMİ ÖDENDİ</span>}
-                        {share.payment_status === 'PENDING' && <span className="text-[10px] text-rose-500 font-extrabold uppercase bg-rose-100 px-2 py-0.5 rounded-full">ÖDENMEDİ</span>}
-                      </div>
-                  </div>
-              </TableCell>
-              <TableCell className="text-right">
-                <div className="flex items-center justify-end gap-1">
-                    <AddPaymentDialog share={share} />
-                    <EditShareDialog share={share} />
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-          {shares.length === 0 && (
+    <div className="w-full mt-6">
+      {/* Mobile View */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {shares.map((share) => (
+          <div key={share.id} className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/60 flex flex-col gap-3 relative overflow-hidden">
+            <div className="flex justify-between items-start pr-4">
+              <div className="flex flex-col">
+                <span className="font-extrabold text-slate-800 text-base">{share.donor_name}</span>
+                <span className="text-slate-500 font-medium text-xs mt-0.5">{share.donor_phone}</span>
+              </div>
+              <div className="flex gap-1 absolute top-3 right-3">
+                 <AddPaymentDialog share={share} />
+                 <EditShareDialog share={share} />
+              </div>
+            </div>
+
+            <div>
+              <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded text-[11px] font-bold w-max">
+                {share.share_type === 'BAGIS' ? 'Yurtdışı Bağış' : share.share_type}
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-1.5 bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+               <div className="flex justify-between text-xs">
+                 <span className="text-slate-500 font-medium">Satış Tutarı:</span>
+                 <span className="font-bold text-slate-700">{share.sale_price || 0} {share.currency}</span>
+               </div>
+               <div className="flex justify-between text-xs">
+                 <span className="text-slate-500 font-medium">Ödenen:</span>
+                 <span className="font-bold text-emerald-600">{share.total_paid || 0} {share.currency}</span>
+               </div>
+               <div className="flex justify-between text-xs border-t border-slate-200 pt-2 mt-0.5">
+                 <span className="text-slate-500 font-medium">Kalan Bakiye:</span>
+                 <span className={`font-bold ${(Number(share.sale_price || 0) - Number(share.total_paid || 0)) > 0 ? 'text-rose-600' : 'text-slate-400'}`}>
+                    {Math.max(0, Number(share.sale_price || 0) - Number(share.total_paid || 0))} {share.currency}
+                 </span>
+               </div>
+               <div className="mt-1 flex justify-end">
+                 {share.payment_status === 'PAID' && <span className="text-[10px] text-emerald-600 font-extrabold uppercase bg-emerald-100 px-2 py-0.5 rounded-full">ÖDENDİ</span>}
+                 {share.payment_status === 'PARTIAL' && <span className="text-[10px] text-amber-600 font-extrabold uppercase bg-amber-100 px-2 py-0.5 rounded-full">KISMİ ÖDENDİ</span>}
+                 {share.payment_status === 'PENDING' && <span className="text-[10px] text-rose-500 font-extrabold uppercase bg-rose-100 px-2 py-0.5 rounded-full">ÖDENMEDİ</span>}
+               </div>
+            </div>
+            
+            <div className="absolute top-0 left-0 w-1 h-full">
+              {share.payment_status === 'PAID' && <div className="w-full h-full bg-emerald-500"></div>}
+              {share.payment_status === 'PARTIAL' && <div className="w-full h-full bg-amber-500"></div>}
+              {share.payment_status === 'PENDING' && <div className="w-full h-full bg-rose-500"></div>}
+            </div>
+          </div>
+        ))}
+        {shares.length === 0 && (
+           <div className="text-center py-8 text-slate-400 font-medium bg-white rounded-xl border border-slate-100">
+             Bu bölgede henüz işlem bulunmuyor.
+           </div>
+        )}
+      </div>
+
+      {/* Desktop View */}
+      <div className="hidden md:block glass-card rounded-[20px] overflow-hidden border border-slate-200/50">
+        <Table>
+          <TableHeader className="bg-slate-50/80">
             <TableRow className="hover:bg-transparent">
-              <TableCell colSpan={5} className="h-32 text-center text-slate-400 font-medium">
-                Bu bölgede henüz işlem bulunmuyor.
-              </TableCell>
+              <TableHead className="font-bold text-slate-700">Bağışçı Adı</TableHead>
+              <TableHead className="font-bold text-slate-700">Telefon</TableHead>
+              <TableHead className="font-bold text-slate-700">Bağış Tipi</TableHead>
+              <TableHead className="font-bold text-slate-700">Bakiye & Durum</TableHead>
+              <TableHead className="font-bold text-slate-700 text-right">İşlem</TableHead>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {shares.map((share) => (
+              <TableRow key={share.id} className="hover:bg-slate-50/50 transition-colors group cursor-default">
+                <TableCell className="font-semibold text-slate-800 group-hover:text-primary transition-colors">
+                  {share.donor_name}
+                </TableCell>
+                <TableCell className="text-slate-500 font-medium tracking-wide">
+                  {share.donor_phone}
+                </TableCell>
+                <TableCell>
+                    <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded text-[11px] font-bold">
+                      {share.share_type === 'BAGIS' ? 'Yurtdışı Bağış' : share.share_type}
+                    </span>
+                </TableCell>
+                <TableCell className="w-[180px]">
+                    <div className="flex flex-col gap-1 bg-slate-50/50 p-2 rounded-lg border border-slate-100/50">
+                        <div className="flex items-center justify-between text-xs">
+                           <span className="text-slate-500 font-medium">Satış Tutarı:</span>
+                           <span className="font-bold text-slate-700">{share.sale_price || 0} {share.currency}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs">
+                           <span className="text-slate-500 font-medium">Ödenen:</span>
+                           <span className="font-bold text-emerald-600">{share.total_paid || 0} {share.currency}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs border-t border-slate-200 pt-1 mt-0.5">
+                           <span className="text-slate-500 font-medium">Kalan Bakiye:</span>
+                           <span className={`font-bold ${(Number(share.sale_price || 0) - Number(share.total_paid || 0)) > 0 ? 'text-rose-600' : 'text-slate-400'}`}>
+                              {Math.max(0, Number(share.sale_price || 0) - Number(share.total_paid || 0))} {share.currency}
+                           </span>
+                        </div>
+                        <div className="mt-1 flex justify-end">
+                          {share.payment_status === 'PAID' && <span className="text-[10px] text-emerald-600 font-extrabold uppercase bg-emerald-100 px-2 py-0.5 rounded-full">ÖDENDİ</span>}
+                          {share.payment_status === 'PARTIAL' && <span className="text-[10px] text-amber-600 font-extrabold uppercase bg-amber-100 px-2 py-0.5 rounded-full">KISMİ ÖDENDİ</span>}
+                          {share.payment_status === 'PENDING' && <span className="text-[10px] text-rose-500 font-extrabold uppercase bg-rose-100 px-2 py-0.5 rounded-full">ÖDENMEDİ</span>}
+                        </div>
+                    </div>
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex items-center justify-end gap-1">
+                      <AddPaymentDialog share={share} />
+                      <EditShareDialog share={share} />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+            {shares.length === 0 && (
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={5} className="h-32 text-center text-slate-400 font-medium">
+                  Bu bölgede henüz işlem bulunmuyor.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   )
 }
@@ -170,7 +231,8 @@ export default async function YurtdisiDashboardPage(props: { searchParams?: Prom
             </p>
           </div>
           {activeCampaign && (
-            <div className="flex-shrink-0 flex items-center gap-2">
+            <div className="flex-shrink-0 flex items-center gap-2 flex-wrap">
+               <ExportExcelButton data={yurtdisiShares} filename="yurtdisi_satis_raporu.csv" />
                <Link href="/dashboard/yurtdisi/animals">
                  <Button variant="outline" className="text-slate-600 font-semibold shadow-sm border-slate-200 bg-white">
                    <Beef className="mr-2 h-4 w-4" /> Hayvan Listesi

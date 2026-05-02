@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { updateAnimal } from './actions'
+import { updateAnimal, deleteAnimal } from './actions'
 
 export function EditAnimalDialog({ animal }: { animal: any }) {
   const [open, setOpen] = useState(false)
@@ -30,6 +30,22 @@ export function EditAnimalDialog({ animal }: { animal: any }) {
     } finally {
         setLoading(false)
     }
+  }
+
+  async function onDelete() {
+      if (!confirm('Bu hayvanı silmek istediğinize emin misiniz? Tüm hisseleri (eğer varsa) boşa çıkacaktır.')) return;
+      
+      setLoading(true)
+      const data = new FormData()
+      data.append('id', animal.id)
+      try {
+          await deleteAnimal(data)
+          setOpen(false)
+      } catch (e: any) {
+          alert(e.message)
+      } finally {
+          setLoading(false)
+      }
   }
 
   const isYurtisi = animal.region !== 'YURTDISI'
@@ -122,9 +138,14 @@ export function EditAnimalDialog({ animal }: { animal: any }) {
             </div>
           )}
 
-          <Button type="submit" className="w-full mt-4 shadow-md bg-blue-600 hover:bg-blue-700" disabled={loading}>
-            {loading ? 'Güncelleniyor...' : 'Hayvanı Güncelle'}
-          </Button>
+          <div className="flex gap-3 mt-4">
+            <Button type="button" variant="destructive" onClick={onDelete} className="w-1/3 shadow-sm" disabled={loading}>
+              SİL
+            </Button>
+            <Button type="submit" className="w-2/3 shadow-md bg-blue-600 hover:bg-blue-700" disabled={loading}>
+              {loading ? 'Güncelleniyor...' : 'Hayvanı Güncelle'}
+            </Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

@@ -23,8 +23,8 @@ export function EditVideoDialog({ animal }: { animal: any }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={
-        <Button size="sm" variant={animal.video_url ? "outline" : "secondary"} className={`w-full text-xs shadow-sm ${animal.video_url ? 'bg-white text-blue-600 border-blue-200 hover:bg-blue-50' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}`}>
-           {animal.video_url ? <><Play className="mr-2 h-3.5 w-3.5" /> Videoyu Güncelle</> : <><Video className="mr-2 h-3.5 w-3.5" /> Kesim Videosu Ekle</>}
+        <Button size="sm" variant={animal.video_url ? "outline" : "secondary"} className={`w-full text-xs shadow-md font-extrabold uppercase tracking-wider transition-all duration-300 ${animal.video_url ? 'bg-white text-blue-700 border-blue-300 hover:bg-blue-50' : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300'}`}>
+           {animal.video_url ? <><Play className="mr-2 h-4 w-4" /> Videoyu Güncelle</> : <><Video className="mr-2 h-4 w-4" /> Kesim Videosu Ekle</>}
         </Button>
       } />
       <DialogContent className="sm:max-w-[425px]">

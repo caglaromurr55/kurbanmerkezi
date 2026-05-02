@@ -12,7 +12,7 @@ export async function createShare(formData: FormData) {
   const { data: userData } = await supabase.from('users').select('tenant_id').eq('id', user.id).single()
 
   const donor_name = formData.get('donor_name') as string
-  const donor_phone = formData.get('donor_phone') as string
+  const donor_phone = formData.get('donor_phone') as string || ''
   const campaign_id = formData.get('campaign_id') as string
   const animal_id = formData.get('animal_id') as string
   
@@ -111,7 +111,7 @@ export async function updateShare(formData: FormData) {
 
   const id = formData.get('id') as string
   const donor_name = formData.get('donor_name') as string
-  const donor_phone = formData.get('donor_phone') as string
+  const donor_phone = formData.get('donor_phone') as string || ''
   const share_type = formData.get('share_type') as string
   const region = formData.get('region') as string
   const reference_name = formData.get('reference_name') as string || null

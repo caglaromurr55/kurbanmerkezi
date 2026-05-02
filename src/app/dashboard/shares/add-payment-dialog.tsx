@@ -75,7 +75,7 @@ export function AddPaymentDialog({ share }: { share: any }) {
             <div className="grid gap-2">
                 <Label htmlFor="amount" className="text-emerald-700">Tahsil Edilen (Gelen)</Label>
                 <div className="relative">
-                    <Wallet className="absolute left-3 top-2.5 h-4 w-4 text-emerald-500" />
+                    <Wallet className="absolute left-3 top-2 h-4 w-4 text-emerald-500" />
                     <Input id="amount" name="amount" type="number" step="0.01" defaultValue={remaining} required className="pl-9 font-bold bg-white focus-visible:ring-emerald-400" placeholder="0.00" />
                 </div>
             </div>
@@ -112,7 +112,7 @@ export function AddPaymentDialog({ share }: { share: any }) {
                 <div className="grid gap-2 animate-in fade-in">
                     <Label htmlFor="exchange_rate">Anlık Kur (1 {currency}=? TL)</Label>
                     <div className="relative">
-                        <ArrowRightLeft className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                        <ArrowRightLeft className="absolute left-3 top-2 h-4 w-4 text-slate-400" />
                         <Input id="exchange_rate" name="exchange_rate" type="number" step="0.0001" value={exchangeRate} onChange={e => setExchangeRate(e.target.value)} required className="pl-9 bg-white" />
                     </div>
                 </div>
@@ -122,7 +122,7 @@ export function AddPaymentDialog({ share }: { share: any }) {
           <div className="grid gap-2 p-2 px-1">
             <Label htmlFor="description">Açıklama / Not</Label>
             <div className="relative">
-               <AlignLeft className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+               <AlignLeft className="absolute left-3 top-2 h-4 w-4 text-slate-400" />
                <Input id="description" name="description" placeholder="Örn: Nakit teslim alındı vb." defaultValue={`${share.donor_name} - Hisse Tahsilatı`} required className="pl-9 bg-white" />
             </div>
           </div>

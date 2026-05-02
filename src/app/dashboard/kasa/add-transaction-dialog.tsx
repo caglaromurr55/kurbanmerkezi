@@ -57,7 +57,7 @@ export function AddTransactionDialog({ campaignId, type }: { campaignId: string,
             <div className="grid gap-2">
                 <Label htmlFor="amount" className={isIncome ? 'text-emerald-700' : 'text-red-700'}>Tutar</Label>
                 <div className="relative">
-                    <Wallet className={`absolute left-3 top-2.5 h-4 w-4 ${isIncome ? 'text-emerald-500' : 'text-red-400'}`} />
+                    <Wallet className={`absolute left-3 top-2 h-4 w-4 ${isIncome ? 'text-emerald-500' : 'text-red-400'}`} />
                     <Input id="amount" name="amount" type="number" step="0.01" required className={`pl-9 font-bold bg-slate-50 ${isIncome ? 'focus-visible:ring-emerald-400' : 'focus-visible:ring-red-400'}`} placeholder="0.00" />
                 </div>
             </div>
@@ -94,7 +94,7 @@ export function AddTransactionDialog({ campaignId, type }: { campaignId: string,
                 <div className="grid gap-2 animate-in fade-in slide-in-from-top-1">
                     <Label htmlFor="exchange_rate">Anlık Kur (1 {currency} = ? TL)</Label>
                     <div className="relative">
-                        <ArrowRightLeft className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                        <ArrowRightLeft className="absolute left-3 top-2 h-4 w-4 text-slate-400" />
                         <Input id="exchange_rate" name="exchange_rate" type="number" step="0.0001" value={exchangeRate} onChange={e => setExchangeRate(e.target.value)} required className="pl-9 bg-slate-50 focus-visible:ring-blue-400" />
                     </div>
                 </div>
@@ -104,7 +104,7 @@ export function AddTransactionDialog({ campaignId, type }: { campaignId: string,
           <div className="grid gap-2 p-2 px-1">
             <Label htmlFor="description">Açıklama</Label>
             <div className="relative">
-               <AlignLeft className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+               <AlignLeft className="absolute left-3 top-2 h-4 w-4 text-slate-400" />
                <Input id="description" name="description" placeholder="Örn: Nakliyat Gideri, Ofis İhtiyacı vb." required className="pl-9 bg-slate-50" />
             </div>
           </div>

@@ -39,7 +39,7 @@ export function ListFilters({ showTypes = true }: { showTypes?: boolean }) {
   return (
     <div className="flex flex-col sm:flex-row gap-3 mb-4 mt-2">
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+        <Search className="absolute left-3 top-2 h-4 w-4 text-slate-400" />
         <Input 
           placeholder="İsim, telefon veya referans ara..." 
           className="pl-9 bg-white shadow-sm border-slate-200" 

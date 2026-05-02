@@ -103,3 +103,19 @@ export async function updateAnimal(formData: FormData) {
   revalidatePath('/dashboard/yurtici')
   revalidatePath('/dashboard/yurtdisi')
 }
+
+export async function deleteAnimal(formData: FormData) {
+  const supabase = await createClient()
+
+  const id = formData.get('id') as string
+
+  const { error } = await supabase.from('animals').delete().eq('id', id)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/dashboard/animals')
+  revalidatePath('/dashboard/yurtici')
+  revalidatePath('/dashboard/yurtdisi')
+}
