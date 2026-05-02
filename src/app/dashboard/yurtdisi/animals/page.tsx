@@ -40,9 +40,14 @@ export default async function YurtdisiAnimalsPage() {
                   <Card key={animal.id} className="glass-card overflow-hidden group transition-all duration-300 hover:shadow-xl border-slate-200">
                     <CardHeader className="bg-slate-50/50 p-4 border-b border-slate-100 flex flex-row items-center justify-between space-y-0">
                         <div className="flex items-center gap-2">
-                            <Tag className="w-4 h-4 text-primary" />
-                            <CardTitle className="text-lg font-extrabold text-slate-800">
+                            <CardTitle className="text-lg font-extrabold text-slate-800 flex items-center gap-2">
+                                <Tag className="w-4 h-4 text-primary" />
                                 {animal.ear_tag || 'İsimsiz'}
+                                {animal.shares?.find((s: any) => s.reference_name)?.reference_name && (
+                                    <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase border border-blue-100 shadow-sm">
+                                        {animal.shares.find((s: any) => s.reference_name).reference_name}
+                                    </span>
+                                )}
                             </CardTitle>
                         </div>
                         <span className={`px-2 py-0.5 rounded-lg text-[11px] font-bold tracking-wider uppercase ${animal.type === 'BUYUKBAS' ? 'bg-indigo-100 text-indigo-700' : 'bg-orange-100 text-orange-700'}`}>
