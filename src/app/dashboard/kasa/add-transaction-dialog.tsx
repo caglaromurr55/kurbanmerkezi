@@ -36,10 +36,9 @@ export function AddTransactionDialog({ campaignId, type }: { campaignId: string,
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button variant={isIncome ? "default" : "destructive"} className={`shadow-sm ${isIncome ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''}`}>
+      <DialogTrigger render={<Button variant={isIncome ? "default" : "destructive"} className={`shadow-sm ${isIncome ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''}`} />}>
           {isIncome ? <PlusCircle className="mr-2 h-4 w-4" /> : <MinusCircle className="mr-2 h-4 w-4" />}
           {isIncome ? 'Gelir Ekle' : 'Gider / Çıkış'}
-        </Button>}>
       </DialogTrigger>
       <DialogContent className="w-[95vw] sm:max-w-[450px] max-h-[85vh] overflow-y-auto">
         <DialogHeader>

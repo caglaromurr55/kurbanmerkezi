@@ -109,10 +109,23 @@ export async function deleteAnimal(formData: FormData) {
 
   const id = formData.get('id') as string
 
+  // Önce bağlı hisselerin animal_id'sini null yap (Boşa çıkar)
+  const { error: shareError } = await supabase.from('shares').update({ animal_id: null }).eq('animal_id', id)
+  if (shareError) {
+    throw new Error(shareError.message)
+  }
+
   const { error } = await supabase.from('animals').delete().eq('id', id)
 
   if (error) {
-    throw new Error(error.message)
+    throw new Error("Veritabanı Hatası: " + error.message)
+  }
+  
+  // Acaba silindi mi kontrol edelim
+  const { data: checkData } = await supabase.from('animals').select('id').eq('id', id).single()
+  
+  if (checkData) {
+      throw new Error("Hata: Hayvan silinemedi! Supabase tarafında Delete (Silme) RLS kuralları kapalı veya hatalı yapılandırılmış. Lütfen Supabase Panelinden 'animals' tablosunun RLS Delete politikasını kontrol edin.")
   }
 
   revalidatePath('/dashboard/animals')

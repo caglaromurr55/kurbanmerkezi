@@ -29,19 +29,26 @@ export default async function YurticiDashboardPage() {
     completedCount = cCount || 0
 
     // Finansal Veriler (Sadece Yurtiçi)
-    const { data: sharesData } = await supabase.from('shares').select('*').eq('campaign_id', activeCampaign.id).eq('region', 'YURTICI').order('created_at', { ascending: false })
+    const { data: sharesData } = await supabase.from('shares').select('*, animals(ear_tag)').eq('campaign_id', activeCampaign.id).eq('region', 'YURTICI').order('created_at', { ascending: false })
     allShares = sharesData || []
     
     if (allShares.length > 0) {
       allShares.forEach(s => {
         const saleTL = Number(s.sale_price || 0) * Number(s.exchange_rate || 1)
-        const costTL = Number(s.cost_price || 0) * Number(s.exchange_rate || 1)
         
         totalRevenue += saleTL
-        totalCost += costTL
 
         if (s.payment_status === 'PENDING') pendingRevenue += saleTL
         if (s.payment_status === 'PARTIAL') pendingRevenue += (saleTL / 2) // Tahmini
+      })
+    }
+
+    // Maliyet Verileri (Sadece Yurtiçi)
+    const { data: aData } = await supabase.from('animals').select('final_weight, initial_weight, price_per_kg').eq('campaign_id', activeCampaign.id).eq('region', 'YURTICI')
+    if (aData) {
+      aData.forEach(a => {
+        const weight = a.final_weight || a.initial_weight || 0
+        totalCost += weight * (a.price_per_kg || 0)
       })
     }
   }

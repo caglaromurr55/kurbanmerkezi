@@ -25,7 +25,6 @@ export function AddShareDialog({ campaignId, animals, defaultInternationalPrice,
   const [paymentMethod, setPaymentMethod] = useState('CASH')
   
   const [salePrice, setSalePrice] = useState<string>('')
-  const [costPrice, setCostPrice] = useState<string>('')
   const [exchangeRate, setExchangeRate] = useState<string>('1.0')
 
   useEffect(() => {
@@ -42,13 +41,11 @@ export function AddShareDialog({ campaignId, animals, defaultInternationalPrice,
       setShareType('BAGIS')
       setCurrency('USD')
       if (defaultInternationalSalePriceTl) setSalePrice(defaultInternationalSalePriceTl.toString())
-      if (defaultInternationalPrice) setCostPrice(defaultInternationalPrice.toString())
       if (fixedUsdRate) setExchangeRate(fixedUsdRate.toString())
     } else {
       setCurrency('TRY')
       setExchangeRate('1.0')
       setSalePrice('')
-      setCostPrice('')
     }
   }
 
@@ -225,14 +222,7 @@ export function AddShareDialog({ campaignId, animals, defaultInternationalPrice,
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                  <div className="grid gap-2 p-3 bg-slate-50/80 border border-slate-200 rounded-md">
-                    <Label htmlFor="cost_price" className="text-slate-700">Dernek Maliyeti</Label>
-                    <div className="relative">
-                      <Wallet className="absolute left-3 top-2 h-4 w-4 text-slate-400" />
-                      <Input id="cost_price" name="cost_price" type="number" step="0.01" value={costPrice} onChange={e => setCostPrice(e.target.value)} required placeholder="0.00" className="pl-9 bg-white" />
-                    </div>
-                  </div>
+                <div className="grid grid-cols-1 sm:grid-cols-1 gap-4 pt-2">
                   <div className="grid gap-2 p-3 bg-slate-50/80 border border-slate-200 rounded-md">
                     <Label htmlFor="payment_method" className="text-slate-600">Ödeme Yöntemi</Label>
                     <Select name="payment_method" value={paymentMethod} onValueChange={(val) => setPaymentMethod(val || 'CASH')}>

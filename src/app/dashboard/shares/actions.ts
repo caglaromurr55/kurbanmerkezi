@@ -21,7 +21,6 @@ export async function createShare(formData: FormData) {
   const reference_name = formData.get('reference_name') as string || null
   const currency = formData.get('currency') as string || 'TRY'
   const sale_price = parseFloat(formData.get('sale_price') as string || '0')
-  const cost_price = parseFloat(formData.get('cost_price') as string || '0')
   const exchange_rate = parseFloat(formData.get('exchange_rate') as string || '1')
   
   const initial_payment = parseFloat(formData.get('initial_payment') as string || '0')
@@ -42,7 +41,6 @@ export async function createShare(formData: FormData) {
     currency,
     payment_status,
     sale_price,
-    cost_price,
     exchange_rate,
     total_paid: initial_payment,
     status: 'PENDING'
@@ -118,7 +116,6 @@ export async function updateShare(formData: FormData) {
   const currency = formData.get('currency') as string
   const payment_status = formData.get('payment_status') as string
   const sale_price = parseFloat(formData.get('sale_price') as string || '0')
-  const cost_price = parseFloat(formData.get('cost_price') as string || '0')
   const exchange_rate = parseFloat(formData.get('exchange_rate') as string || '1')
 
   const { error } = await supabase.from('shares').update({
@@ -130,7 +127,6 @@ export async function updateShare(formData: FormData) {
     currency,
     payment_status,
     sale_price,
-    cost_price,
     exchange_rate
   }).eq('id', id)
 

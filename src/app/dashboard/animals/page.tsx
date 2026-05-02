@@ -44,9 +44,9 @@ export default async function AnimalsPage() {
                             <CardTitle className="text-lg font-extrabold text-slate-800 flex items-center gap-2">
                                 <Tag className="w-4 h-4 text-primary" />
                                 {animal.ear_tag || 'İsimsiz'}
-                                {animal.shares?.find((s: any) => s.reference_name)?.reference_name && (
-                                    <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase border border-blue-100 shadow-sm">
-                                        {animal.shares.find((s: any) => s.reference_name).reference_name}
+                                {animal.weight_group && (
+                                    <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase border border-emerald-100 shadow-sm">
+                                        {animal.weight_group}
                                     </span>
                                 )}
                             </CardTitle>

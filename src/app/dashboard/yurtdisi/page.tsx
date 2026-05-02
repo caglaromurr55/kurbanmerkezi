@@ -184,7 +184,7 @@ export default async function YurtdisiDashboardPage(props: { searchParams?: Prom
     }
 
     // Sadece Yurtdışı Verileri
-    const { data: sData, count: sCount } = await supabase.from('shares').select('*', { count: 'exact' }).eq('campaign_id', activeCampaign.id).eq('region', 'YURTDISI').order('created_at', { ascending: false })
+    const { data: sData, count: sCount } = await supabase.from('shares').select('*, animals(ear_tag)', { count: 'exact' }).eq('campaign_id', activeCampaign.id).eq('region', 'YURTDISI').order('created_at', { ascending: false })
 
     shareCount = sCount || 0
     let filteredData = sData || []
@@ -208,14 +208,21 @@ export default async function YurtdisiDashboardPage(props: { searchParams?: Prom
 
     yurtdisiShares.forEach(s => {
       const saleTL = Number(s.sale_price || 0) * Number(s.exchange_rate || 1)
-      const costTL = Number(s.cost_price || 0) * Number(s.exchange_rate || 1)
       
       totalRevenue += saleTL
-      totalCost += costTL
 
       if (s.payment_status === 'PENDING') pendingRevenue += saleTL
       if (s.payment_status === 'PARTIAL') pendingRevenue += (saleTL / 2)
     })
+
+    // Maliyet Verileri (Sadece Yurtdışı)
+    const { data: aData } = await supabase.from('animals').select('final_weight, initial_weight, price_per_kg').eq('campaign_id', activeCampaign.id).eq('region', 'YURTDISI')
+    if (aData) {
+      aData.forEach(a => {
+        const weight = a.final_weight || a.initial_weight || 0
+        totalCost += weight * (a.price_per_kg || 0)
+      })
+    }
   }
 
   const netProfit = totalRevenue - totalCost

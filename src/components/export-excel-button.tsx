@@ -11,7 +11,7 @@ export function ExportExcelButton({ data, filename = 'liste.csv' }: { data: any[
     }
 
     // Tablo başlıklarını alalım (ilk öğenin anahtarları veya custom başlık)
-    const headers = ['Bağışçı Adı', 'Telefon', 'Bağış Tipi/Kurban', 'Para Birimi', 'Satış Tutarı', 'Ödenen', 'Ödeme Durumu', 'Bölge', 'Referans', 'Tarih'];
+    const headers = ['Bağışçı Adı', 'Telefon', 'Bağış Tipi/Kurban', 'Para Birimi', 'Satış Tutarı', 'Ödenen', 'Ödeme Durumu', 'Bölge', 'Referans (Grup)', 'Küpe No / Hayvan', 'Tarih'];
     
     // Verileri CSV formatına dönüştürelim
     const csvContent = [
@@ -27,6 +27,7 @@ export function ExportExcelButton({ data, filename = 'liste.csv' }: { data: any[
           `"${(item.payment_status === 'PAID' ? 'ÖDENDİ' : item.payment_status === 'PARTIAL' ? 'KISMİ ÖDENDİ' : 'ÖDENMEDİ')}"`,
           `"${(item.region || '').replace(/"/g, '""')}"`,
           `"${(item.reference_name || '').replace(/"/g, '""')}"`,
+          `"${(item.animals?.ear_tag ? item.animals.ear_tag : (item.status === 'ASSIGNED' ? 'Atandı (Bilinmiyor)' : 'Havuza Bırakıldı'))}"`,
           `"${new Date(item.created_at).toLocaleDateString('tr-TR')}"`
         ].join(';'); // Sütunları ; ile ayıralım (Türkçe Excel için ; daha iyi çalışır)
       })
