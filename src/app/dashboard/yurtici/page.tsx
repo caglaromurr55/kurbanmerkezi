@@ -16,6 +16,7 @@ export default async function YurticiDashboardPage() {
   let totalRevenue = 0
   let totalCost = 0
   let pendingRevenue = 0
+  let allShares: any[] = []
 
   if (activeCampaign) {
     // Sadece Yurtiçi verileri
@@ -28,9 +29,10 @@ export default async function YurticiDashboardPage() {
     completedCount = cCount || 0
 
     // Finansal Veriler (Sadece Yurtiçi)
-    const { data: allShares } = await supabase.from('shares').select('*').eq('campaign_id', activeCampaign.id).eq('region', 'YURTICI').order('created_at', { ascending: false })
+    const { data: sharesData } = await supabase.from('shares').select('*').eq('campaign_id', activeCampaign.id).eq('region', 'YURTICI').order('created_at', { ascending: false })
+    allShares = sharesData || []
     
-    if (allShares) {
+    if (allShares.length > 0) {
       allShares.forEach(s => {
         const saleTL = Number(s.sale_price || 0) * Number(s.exchange_rate || 1)
         const costTL = Number(s.cost_price || 0) * Number(s.exchange_rate || 1)
