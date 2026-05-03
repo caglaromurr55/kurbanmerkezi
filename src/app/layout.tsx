@@ -5,8 +5,11 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 
 export const metadata: Metadata = {
-  title: 'Kurban Merkezi | Premium Yönetim',
+  title: 'Kurban Merkezi',
   description: 'Kurban organizasyonlarınızı profesyonelce yönetin.',
+  icons: {
+    icon: '/logo.png',
+  },
 }
 
 export default function RootLayout({
