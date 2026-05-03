@@ -65,9 +65,14 @@ export function AddShareDialog({ campaignId, animals, defaultInternationalPrice,
     if (shareType === 'DIGER') {
         formData.set('share_type', customShareType || 'DİĞER')
     }
-    await createShare(formData)
-    setLoading(false)
-    setOpen(false)
+    try {
+      await createShare(formData)
+      setOpen(false)
+    } catch (e: any) {
+      alert(e.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const isForeign = currency !== 'TRY'

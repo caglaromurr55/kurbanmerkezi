@@ -24,9 +24,14 @@ export function AddAnimalDialog({ campaignId, defaultRegion = 'YURTICI' }: { cam
       formData.set('initial_weight', '0')
       formData.set('final_weight', '0')
     }
-    await createAnimal(formData)
-    setLoading(false)
-    setOpen(false)
+    try {
+      await createAnimal(formData)
+      setOpen(false)
+    } catch (e: any) {
+      alert(e.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
