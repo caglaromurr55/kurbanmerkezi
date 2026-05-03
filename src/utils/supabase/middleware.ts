@@ -27,7 +27,20 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    return NextResponse.redirect(url)
+  }
+
+  // Eğer giriş yapmış kullanıcı /login sayfasına gitmeye çalışırsa /dashboard'a yönlendir (Opsiyonel ama iyi bir pratik)
+  if (request.nextUrl.pathname === '/login' && user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/dashboard'
+    return NextResponse.redirect(url)
+  }
 
   return supabaseResponse
 }
