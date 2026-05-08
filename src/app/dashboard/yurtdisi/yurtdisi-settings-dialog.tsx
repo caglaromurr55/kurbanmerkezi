@@ -14,9 +14,14 @@ export function YurtdisiSettingsDialog({ settings }: { settings: any }) {
 
   async function onSubmit(formData: FormData) {
     setLoading(true)
-    await updateYurtdisiSettingsAction(formData)
-    setLoading(false)
-    setOpen(false)
+    try {
+      await updateYurtdisiSettingsAction(formData)
+      setOpen(false)
+    } catch (e: any) {
+      alert(e.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

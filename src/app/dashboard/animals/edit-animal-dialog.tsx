@@ -23,17 +23,17 @@ export function EditAnimalDialog({ animal }: { animal: any }) {
     formData.append('id', animal.id)
     formData.append('region', animal.region)
     try {
-        await updateAnimal(formData)
-        setOpen(false)
+      await updateAnimal(formData)
+      setOpen(false)
     } catch (e: any) {
-        alert(e.message)
+      alert(e.message)
     } finally {
-        setLoading(false)
+      setLoading(false)
     }
   }
 
   async function onDelete() {
-      if (!confirm('Bu hayvanı silmek istediğinize emin misiniz? Tüm hisseleri (eğer varsa) boşa çıkacaktır.')) return;
+      if (!confirm('Bu hayvanı ve bağlı tüm hisse atamalarını silmek istediğinize emin misiniz?')) return;
       
       setLoading(true)
       const data = new FormData()

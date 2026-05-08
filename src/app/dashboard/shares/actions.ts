@@ -118,6 +118,8 @@ export async function updateShare(formData: FormData) {
   const sale_price = parseFloat(formData.get('sale_price') as string || '0')
   const exchange_rate = parseFloat(formData.get('exchange_rate') as string || '1')
 
+  const { data: oldShare } = await supabase.from('shares').select('currency').eq('id', id).single()
+
   const { error } = await supabase.from('shares').update({
     donor_name,
     donor_phone,
@@ -131,6 +133,11 @@ export async function updateShare(formData: FormData) {
   }).eq('id', id)
 
   if (error) throw new Error(error.message)
+
+  if (oldShare && oldShare.currency !== currency) {
+      // Update existing transactions to match the new currency and exchange rate
+      await supabase.from('transactions').update({ currency, exchange_rate }).eq('share_id', id)
+  }
 
   revalidatePath('/dashboard/shares')
   revalidatePath('/dashboard/animals')

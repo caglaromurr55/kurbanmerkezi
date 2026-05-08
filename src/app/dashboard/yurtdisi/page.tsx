@@ -209,20 +209,16 @@ export default async function YurtdisiDashboardPage(props: { searchParams?: Prom
     yurtdisiShares.forEach(s => {
       const saleTL = Number(s.sale_price || 0) * Number(s.exchange_rate || 1)
       
+      const paidTL = Number(s.total_paid || 0) * Number(s.exchange_rate || 1)
       totalRevenue += saleTL
-
-      if (s.payment_status === 'PENDING') pendingRevenue += saleTL
-      if (s.payment_status === 'PARTIAL') pendingRevenue += (saleTL / 2)
+      pendingRevenue += Math.max(0, saleTL - paidTL)
     })
 
-    // Maliyet Verileri (Sadece Yurtdışı)
-    const { data: aData } = await supabase.from('animals').select('final_weight, initial_weight, price_per_kg').eq('campaign_id', activeCampaign.id).eq('region', 'YURTDISI')
-    if (aData) {
-      aData.forEach(a => {
-        const weight = a.final_weight || a.initial_weight || 0
-        totalCost += weight * (a.price_per_kg || 0)
-      })
-    }
+    // Maliyet Verileri (Sadece Yurtdışı) - Dernek Dışı Maliyet (Döviz Cinsinden) baz alınır
+    // defIntPrice: Döviz cinsinden hisse başı maliyet
+    // usdRate: Anlık veya sabit kur
+    // Toplam maliyet = Hisse Sayısı * Döviz Maliyeti * Kur
+    totalCost = shareCount * defIntPrice * usdRate
   }
 
   const netProfit = totalRevenue - totalCost

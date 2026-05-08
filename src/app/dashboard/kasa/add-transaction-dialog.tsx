@@ -23,9 +23,14 @@ export function AddTransactionDialog({ campaignId, type }: { campaignId: string,
     setLoading(true)
     formData.append('campaign_id', campaignId)
     formData.append('type', type)
-    await addTransaction(formData)
-    setLoading(false)
-    setOpen(false)
+    try {
+      await addTransaction(formData)
+      setOpen(false)
+    } catch (e: any) {
+      alert(e.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleCurrencyChange = (val: string | null) => {

@@ -30,9 +30,14 @@ export function EditShareDialog({ share }: { share: any }) {
     if (shareType === 'DIGER') {
         formData.set('share_type', customShareType || 'DİĞER')
     }
-    await updateShare(formData)
-    setLoading(false)
-    setOpen(false)
+    try {
+      await updateShare(formData)
+      setOpen(false)
+    } catch (e: any) {
+      alert(e.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function onDelete() {
@@ -41,9 +46,14 @@ export function EditShareDialog({ share }: { share: any }) {
       setLoading(true)
       const data = new FormData()
       data.append('id', share.id)
-      await deleteShare(data)
-      setLoading(false)
-      setOpen(false)
+      try {
+        await deleteShare(data)
+        setOpen(false)
+      } catch (e: any) {
+        alert(e.message)
+      } finally {
+        setLoading(false)
+      }
   }
 
   const isForeign = currency !== 'TRY'

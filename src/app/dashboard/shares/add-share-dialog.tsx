@@ -20,7 +20,7 @@ export function AddShareDialog({ campaignId, animals, defaultInternationalPrice,
   const [shareType, setShareType] = useState(defaultRegion === 'YURTDISI' ? 'BAGIS' : 'HISSE_SATISI')
   const [customShareType, setCustomShareType] = useState('')
   const [region, setRegion] = useState(defaultRegion)
-  const [currency, setCurrency] = useState(defaultRegion === 'YURTDISI' ? 'USD' : 'TRY')
+  const [currency, setCurrency] = useState('TRY')
   const [selectedAnimalId, setSelectedAnimalId] = useState('none')
   const [paymentMethod, setPaymentMethod] = useState('CASH')
   
@@ -39,7 +39,7 @@ export function AddShareDialog({ campaignId, animals, defaultInternationalPrice,
     setRegion(val)
     if (val === 'YURTDISI') {
       setShareType('BAGIS')
-      setCurrency('USD')
+      setCurrency('TRY')
       if (defaultInternationalSalePriceTl) setSalePrice(defaultInternationalSalePriceTl.toString())
       if (fixedUsdRate) setExchangeRate(fixedUsdRate.toString())
     } else {

@@ -35,9 +35,14 @@ export function AddShareToAnimalDialog({ campaignId, animalId, animalTag, animal
   async function onAssign(formData: FormData) {
     setLoading(true)
     formData.append('animal_id', animalId)
-    await assignShareToAnimal(formData)
-    setLoading(false)
-    setOpen(false)
+    try {
+      await assignShareToAnimal(formData)
+      setOpen(false)
+    } catch (e: any) {
+      alert(e.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const isForeign = currency !== 'TRY'
