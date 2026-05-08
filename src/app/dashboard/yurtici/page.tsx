@@ -36,10 +36,9 @@ export default async function YurticiDashboardPage() {
       allShares.forEach(s => {
         const saleTL = Number(s.sale_price || 0) * Number(s.exchange_rate || 1)
         
+        const paidTL = Number(s.total_paid || 0) * Number(s.exchange_rate || 1)
         totalRevenue += saleTL
-
-        if (s.payment_status === 'PENDING') pendingRevenue += saleTL
-        if (s.payment_status === 'PARTIAL') pendingRevenue += (saleTL / 2) // Tahmini
+        pendingRevenue += Math.max(0, saleTL - paidTL)
       })
     }
 
