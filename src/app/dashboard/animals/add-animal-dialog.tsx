@@ -14,6 +14,16 @@ export function AddAnimalDialog({ campaignId, defaultRegion = 'YURTICI' }: { cam
   const [loading, setLoading] = useState(false)
   const [region, setRegion] = useState(defaultRegion)
   const [animalType, setAnimalType] = useState('BUYUKBAS')
+  const [shareCapacity, setShareCapacity] = useState('7')
+
+  const handleAnimalTypeChange = (val: string) => {
+    setAnimalType(val)
+    if (val === 'KUCUKBAS') {
+      setShareCapacity('1')
+    } else {
+      setShareCapacity('7')
+    }
+  }
 
   async function onSubmit(formData: FormData) {
     setLoading(true)
@@ -51,7 +61,7 @@ export function AddAnimalDialog({ campaignId, defaultRegion = 'YURTICI' }: { cam
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="type">Hayvan Türü</Label>
-                <Select name="type" required value={animalType} onValueChange={(val) => setAnimalType(val || 'BUYUKBAS')}>
+                <Select name="type" required value={animalType} onValueChange={(val) => handleAnimalTypeChange(val || 'BUYUKBAS')}>
                   <SelectTrigger>
                     <span className="truncate">{animalType === 'BUYUKBAS' ? 'Büyükbaş' : 'Küçükbaş'}</span>
                   </SelectTrigger>
@@ -81,7 +91,7 @@ export function AddAnimalDialog({ campaignId, defaultRegion = 'YURTICI' }: { cam
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="share_capacity">Hisse Kapasitesi</Label>
-                <Input id="share_capacity" name="share_capacity" type="number" defaultValue={7} required min={1} max={7} />
+                <Input id="share_capacity" name="share_capacity" type="number" value={shareCapacity} onChange={e => setShareCapacity(e.target.value)} required min={1} max={7} />
               </div>
           </div>
           {region !== 'YURTDISI' && (

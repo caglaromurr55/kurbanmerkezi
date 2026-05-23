@@ -47,3 +47,35 @@ export async function deleteTransaction(formData: FormData) {
 
   revalidatePath('/dashboard/kasa')
 }
+
+export async function updateTransaction(formData: FormData) {
+  const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
+
+  const id = formData.get('id') as string
+  const type = formData.get('type') as string // 'INCOME' or 'EXPENSE'
+  const amount = parseFloat(formData.get('amount') as string)
+  const currency = formData.get('currency') as string || 'TRY'
+  const payment_method = formData.get('payment_method') as string || 'CASH'
+  const description = formData.get('description') as string
+  const exchange_rate = parseFloat(formData.get('exchange_rate') as string || '1')
+
+  const { error } = await supabase.from('transactions').update({
+    type,
+    amount,
+    currency,
+    payment_method,
+    description,
+    exchange_rate
+  }).eq('id', id)
+
+  if (error) {
+    console.error('Error updating transaction:', error)
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/dashboard/kasa')
+}
+

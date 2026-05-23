@@ -236,3 +236,20 @@ export async function assignShareToAnimal(formData: FormData) {
   revalidatePath('/dashboard/animals')
   revalidatePath('/dashboard/yurtdisi/animals')
 }
+
+export async function unassignShareFromAnimal(formData: FormData) {
+  const supabase = await createClient()
+  const id = formData.get('id') as string
+
+  const { error } = await supabase.from('shares').update({
+    animal_id: null,
+    status: 'PENDING'
+  }).eq('id', id)
+
+  if (error) throw new Error(error.message)
+
+  revalidatePath('/dashboard/shares')
+  revalidatePath('/dashboard/animals')
+  revalidatePath('/dashboard/yurtdisi/animals')
+}
+

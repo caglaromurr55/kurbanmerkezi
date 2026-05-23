@@ -2,12 +2,12 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { PlusCircle, User, Phone, Tags, Link2, Wallet, DollarSign, ArrowRightLeft } from 'lucide-react'
+import { PlusCircle, User, Phone, Tags, Link2, Wallet, DollarSign, ArrowRightLeft, Trash2, Undo } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { updateShare, deleteShare } from '../shares/actions'
+import { updateShare, deleteShare, unassignShareFromAnimal } from '../shares/actions'
 
 export function EditShareDialog({ share }: { share: any }) {
   const [open, setOpen] = useState(false)
@@ -42,6 +42,17 @@ export function EditShareDialog({ share }: { share: any }) {
       const data = new FormData()
       data.append('id', share.id)
       await deleteShare(data)
+      setLoading(false)
+      setOpen(false)
+  }
+
+  async function onUnassign() {
+      if (!confirm('Bu hissedarı hayvandan çıkarıp havuza geri almak istediğinize emin misiniz?')) return;
+
+      setLoading(true)
+      const data = new FormData()
+      data.append('id', share.id)
+      await unassignShareFromAnimal(data)
       setLoading(false)
       setOpen(false)
   }
@@ -98,7 +109,7 @@ export function EditShareDialog({ share }: { share: any }) {
                 <input type="hidden" name="region" value={region} />
                 <div className="grid gap-2">
                   <Label htmlFor="share_type" className="text-slate-600">Kurban Türü</Label>
-                  <Select name="share_type" value={shareType} onValueChange={(val) => setShareType(val || '')} required>
+                  <Select name="share_type" value={shareType} onValueChange={(val: string) => setShareType(val || '')} required>
                     <SelectTrigger className="bg-slate-50/50">
                       <span className="truncate">{shareType ? SHARE_TYPE_MAP[shareType] : 'Tür seçiniz'}</span>
                     </SelectTrigger>
@@ -115,7 +126,7 @@ export function EditShareDialog({ share }: { share: any }) {
                 {shareType === 'DIGER' && (
                   <div className="grid gap-2 p-3 bg-orange-50 rounded-md border border-orange-100">
                     <Label htmlFor="custom_share_type" className="text-orange-800">Kurban Türü Belirtiniz</Label>
-                    <Input id="custom_share_type" value={customShareType} onChange={(e) => setCustomShareType(e.target.value)} placeholder="Örn: Şükür Kurbanı" className="bg-white border-orange-200 focus-visible:ring-orange-300" required />
+                    <Input id="custom_share_type" value={customShareType} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomShareType(e.target.value)} placeholder="Örn: Şükür Kurbanı" className="bg-white border-orange-200 focus-visible:ring-orange-300" required />
                   </div>
                 )}
 
@@ -141,7 +152,7 @@ export function EditShareDialog({ share }: { share: any }) {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="currency" className="text-slate-600">Para Birimi</Label>
-                    <Select name="currency" value={currency} onValueChange={(val) => setCurrency(val || '')} required>
+                    <Select name="currency" value={currency} onValueChange={(val: string) => setCurrency(val || '')} required>
                       <SelectTrigger className="bg-slate-50/50">
                         <span className="truncate">{currency ? CURRENCY_MAP[currency] : 'Döviz'}</span>
                       </SelectTrigger>
@@ -184,12 +195,17 @@ export function EditShareDialog({ share }: { share: any }) {
 
               </div>
           </div>
-          <div className="sticky bottom-0 bg-white pt-4 pb-4 mt-2 border-t flex gap-3 px-1">
-            <Button type="button" variant="destructive" onClick={onDelete} className="w-1/3 shadow-sm" disabled={loading}>
-                KAYDI SİL
+          <div className="sticky bottom-0 bg-white pt-4 pb-4 mt-2 border-t flex flex-col sm:flex-row gap-3 px-1">
+            {share.animal_id && (
+              <Button type="button" variant="outline" onClick={onUnassign} className="sm:flex-1 border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm font-semibold cursor-pointer gap-1" disabled={loading}>
+                <Undo className="h-4 w-4" /> HAVUZA AL
+              </Button>
+            )}
+            <Button type="button" variant="destructive" onClick={onDelete} className="sm:flex-1 shadow-sm cursor-pointer gap-1" disabled={loading}>
+              <Trash2 className="h-4 w-4" /> KAYDI SİL
             </Button>
-            <Button type="submit" className="w-2/3 shadow-md" disabled={loading}>
-              {loading ? 'Güncelleniyor...' : 'DEĞİŞİKLİKLERİ KAYDET'}
+            <Button type="submit" className="sm:flex-1 shadow-md font-semibold cursor-pointer" disabled={loading}>
+              {loading ? 'Güncelleniyor...' : 'KAYDET'}
             </Button>
           </div>
         </form>
@@ -197,3 +213,4 @@ export function EditShareDialog({ share }: { share: any }) {
     </Dialog>
   )
 }
+
