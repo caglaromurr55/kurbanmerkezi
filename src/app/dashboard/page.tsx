@@ -11,15 +11,33 @@ export default async function DashboardIndex() {
   let totalCost = 0;
   
   if (activeCampaign) {
-    const { data: allShares } = await supabase.from('shares').select('sale_price, cost_price, exchange_rate').eq('campaign_id', activeCampaign.id)
+    const { data: allShares } = await supabase.from('shares').select('sale_price, cost_price, exchange_rate, region').eq('campaign_id', activeCampaign.id)
     
     if (allShares) {
       allShares.forEach(s => {
         const saleTL = Number(s.sale_price || 0) * Number(s.exchange_rate || 1)
-        const costTL = Number(s.cost_price || 0) * Number(s.exchange_rate || 1)
-        
         totalRevenue += saleTL
-        totalCost += costTL
+        
+        // Sadece YURTDISI hisselerinin cost_price degerini ekliyoruz.
+        // Cunku YURTICI kurban maliyeti dogrudan hayvan kilosu uzerinden hesaplanacaktır.
+        if (s.region === 'YURTDISI') {
+          const costTL = Number(s.cost_price || 0) * Number(s.exchange_rate || 1)
+          totalCost += costTL
+        }
+      })
+    }
+
+    // YURTICI hayvanlarin maliyetlerini ekle
+    const { data: yurticiAnimalsData } = await supabase
+      .from('animals')
+      .select('price_per_kg, final_weight, initial_weight')
+      .eq('campaign_id', activeCampaign.id)
+      .eq('region', 'YURTICI')
+
+    if (yurticiAnimalsData) {
+      yurticiAnimalsData.forEach(a => {
+        const weight = Number(a.final_weight || 0) || Number(a.initial_weight || 0)
+        totalCost += Number(a.price_per_kg || 0) * weight
       })
     }
   }
