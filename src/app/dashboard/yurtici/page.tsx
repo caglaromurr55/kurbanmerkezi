@@ -149,15 +149,12 @@ export default async function YurticiDashboardPage() {
         <div className="bg-white rounded-xl shadow-sm border border-slate-200/60 overflow-x-auto w-full">
           <Table>
             <TableHeader className="bg-slate-50">
-              <TableRow>
+              <TableRow className="hover:bg-transparent">
                 <TableHead className="font-semibold text-slate-600 py-3">Küpe Numarası</TableHead>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead className="font-semibold text-slate-600 py-3">Küpe Numarası</TableHead>
-                  <TableHead className="font-semibold text-slate-600 py-3">Tür</TableHead>
-                  <TableHead className="font-semibold text-slate-600 py-3">İlk Kilo</TableHead>
-                  <TableHead className="font-semibold text-slate-600 py-3">Son Karkas</TableHead>
-                  <TableHead className="font-semibold text-slate-600 py-3 text-right">Durum</TableHead>
-                </TableRow>
+                <TableHead className="font-semibold text-slate-600 py-3">Tür</TableHead>
+                <TableHead className="font-semibold text-slate-600 py-3">İlk Kilo</TableHead>
+                <TableHead className="font-semibold text-slate-600 py-3">Son Karkas</TableHead>
+                <TableHead className="font-semibold text-slate-600 py-3 text-right">Durum</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
