@@ -325,7 +325,7 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
                     {/* Left Column: Slaughter Order Box */}
                     <div className="w-[120px] border-[3px] border-black p-2 flex flex-col justify-between items-center text-center rounded-sm shrink-0">
                       <div className="flex-1 flex items-center justify-center">
-                        <span className="text-4.5xl font-black text-black tracking-tighter uppercase leading-none break-all max-w-[100px]">
+                        <span className="text-[64px] font-black text-black tracking-tighter uppercase leading-none break-all max-w-[100px]">
                           {currentOrder}
                         </span>
                       </div>
