@@ -5,11 +5,12 @@ import { AddShareToAnimalDialog } from '../../animals/add-share-to-animal-dialog
 import { EditShareDialog } from '../../animals/edit-share-dialog'
 import { EditVideoDialog } from '../../animals/edit-video-dialog'
 import { Users, Scale, Tag } from 'lucide-react'
+import { PrintCardDialog } from './print-card-dialog'
 
 export default async function YurtdisiAnimalsPage() {
   const supabase = await createClient()
   
-  const { data: activeCampaign } = await supabase.from('campaigns').select('id').eq('is_active', true).single()
+  const { data: activeCampaign } = await supabase.from('campaigns').select('id, year, name').eq('is_active', true).single()
   
   let animals: any[] = []
   let unassignedShares: any[] = []
@@ -104,6 +105,13 @@ export default async function YurtdisiAnimalsPage() {
                                <AddShareToAnimalDialog campaignId={activeCampaign.id} animalId={animal.id} animalTag={animal.ear_tag} animalRegion={animal.region} unassignedShares={unassignedShares} />
                            ) : (
                                <span className="text-[11px] font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-lg text-center w-full uppercase tracking-widest shadow-sm">TAMAMLANDI</span>
+                           )}
+                           {activeCampaign && (
+                             <PrintCardDialog 
+                               animal={animal} 
+                               campaignYear={activeCampaign.year} 
+                               campaignName={activeCampaign.name} 
+                             />
                            )}
                            <EditVideoDialog animal={animal} />
                         </div>

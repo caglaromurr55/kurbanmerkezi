@@ -23,7 +23,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="flex min-h-screen flex-col w-full bg-slate-50/50">
-      <header className="sticky top-0 z-50 glass-nav flex h-16 items-center gap-2 sm:gap-4 px-2 sm:px-8">
+      <header className="sticky top-0 z-50 glass-nav flex h-16 items-center gap-2 sm:gap-4 px-2 sm:px-8 print:hidden">
         <Sheet>
           <SheetTrigger render={<Button variant="ghost" size="icon" className="xl:hidden shrink-0" />}>
             <Menu className="h-5 w-5" />
@@ -108,7 +108,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </form>
         </div>
       </header>
-      <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 max-w-[1400px] w-full mx-auto animate-slide-up">
+      <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 max-w-[1400px] w-full mx-auto animate-slide-up print:p-0 print:max-w-none print:w-full print:shadow-none print:mt-0">
         {children}
       </main>
     </div>

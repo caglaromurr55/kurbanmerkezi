@@ -18,7 +18,18 @@ interface MatchmakingBoardProps {
 
 export function MatchmakingBoard({ initialAnimals, initialPendingShares, campaignId }: MatchmakingBoardProps) {
   const router = useRouter()
-  const [animals, setAnimals] = useState<any[]>(initialAnimals)
+  
+  const sortFullAnimalsToBottom = (list: any[]) => {
+    return [...list].sort((a, b) => {
+      const aFull = (a.shares?.length || 0) >= (a.share_capacity || 7)
+      const bFull = (b.shares?.length || 0) >= (b.share_capacity || 7)
+      if (aFull && !bFull) return 1
+      if (!aFull && bFull) return -1
+      return 0
+    })
+  }
+
+  const [animals, setAnimals] = useState<any[]>(() => sortFullAnimalsToBottom(initialAnimals))
   const [draggedGroup, setDraggedGroup] = useState<{ shareIds: string[]; name: string } | null>(null)
   const [dragOverAnimalId, setDragOverAnimalId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -36,7 +47,7 @@ export function MatchmakingBoard({ initialAnimals, initialPendingShares, campaig
 
   // Sunucudan gelen kurban listesi güncellendiğinde yerel state'i güncelle
   useEffect(() => {
-    setAnimals(initialAnimals)
+    setAnimals(sortFullAnimalsToBottom(initialAnimals))
   }, [initialAnimals])
 
   // 1. Bekleyen Hisseleri Gruplandır (Referansa Göre)

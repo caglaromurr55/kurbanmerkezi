@@ -7,10 +7,12 @@ import { EditVideoDialog } from './edit-video-dialog'
 import { EditAnimalDialog } from './edit-animal-dialog'
 import { Users, Scale, Tag, Clock, Scissors, CheckCircle2 } from 'lucide-react'
 
+import { PrintButton } from '@/components/print-button'
+
 export default async function AnimalsPage() {
   const supabase = await createClient()
   
-  const { data: activeCampaign } = await supabase.from('campaigns').select('id').eq('is_active', true).single()
+  const { data: activeCampaign } = await supabase.from('campaigns').select('id, name').eq('is_active', true).single()
   
   let animals: any[] = []
   let unassignedShares: any[] = []
@@ -27,9 +29,13 @@ export default async function AnimalsPage() {
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-1">
             <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Yurtiçi Kurbanlıklar</h1>
-            <p className="text-slate-500 font-medium">Sisteme kayıtlı yurtiçi kurbanlıklar ve hisse doluluk oranları.</p>
+            <p className="text-slate-500 font-semibold text-sm print:hidden">Sisteme kayıtlı yurtiçi kurbanlıklar ve hisse doluluk oranları.</p>
+            <p className="text-slate-500 font-bold text-sm hidden print:block">Aktif Dönem: {activeCampaign?.name || ''}</p>
         </div>
-        {activeCampaign && <AddAnimalDialog campaignId={activeCampaign.id} />}
+        <div className="flex items-center gap-2">
+            {activeCampaign && <PrintButton />}
+            {activeCampaign && <AddAnimalDialog campaignId={activeCampaign.id} />}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

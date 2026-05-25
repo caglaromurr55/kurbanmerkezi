@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { AddShareDialog } from './add-share-dialog'
 import { AutoMatchButton } from './auto-match-button'
+import { PrintButton } from '@/components/print-button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { EditShareDialog } from '@/app/dashboard/animals/edit-share-dialog'
@@ -136,7 +137,7 @@ export default async function SharesPage(props: { searchParams?: Promise<{ [key:
     const typeFilter = searchParams?.type || 'ALL'
     const statusFilter = searchParams?.status || 'ALL'
     
-    const { data: activeCampaign } = await supabase.from('campaigns').select('id').eq('is_active', true).single()
+    const { data: activeCampaign } = await supabase.from('campaigns').select('id, name').eq('is_active', true).single()
     
     let shares: any[] = []
     let availableAnimals: any[] = []
@@ -199,9 +200,11 @@ export default async function SharesPage(props: { searchParams?: Promise<{ [key:
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-1">
               <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Hisseler ve Bağışçılar</h1>
-              <p className="text-slate-500 font-medium">Kurban türlerine göre bağışçıları yönetin ve listeleri takip edin.</p>
+              <p className="text-slate-500 font-semibold text-sm print:hidden">Kurban türlerine göre bağışçıları yönetin ve listeleri takip edin.</p>
+              <p className="text-slate-500 font-bold text-sm hidden print:block">Aktif Dönem: {activeCampaign?.name || ''}</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+              {activeCampaign && <PrintButton />}
               {activeCampaign && <AutoMatchButton campaignId={activeCampaign.id} />}
               {activeCampaign && <AddShareDialog campaignId={activeCampaign.id} animals={availableAnimals} defaultInternationalPrice={defIntPrice} defaultInternationalSalePriceTl={defIntSalePriceTl} fixedUsdRate={usdRate} />}
           </div>
