@@ -45,9 +45,33 @@ export function MatchmakingBoard({ initialAnimals, initialPendingShares, campaig
     })
   }
 
-  // Sunucudan gelen kurban listesi güncellendiğinde yerel state'i güncelle
+  // Sunucudan gelen kurban listesi güncellendiğinde yerel state'i ve el ile sıralamayı güncelle
   useEffect(() => {
-    setAnimals(sortFullAnimalsToBottom(initialAnimals))
+    setAnimals(prevAnimals => {
+      // Sunucu güncellemelerini ID'ye göre eşlemek için map
+      const updatedMap = new Map(initialAnimals.map(a => [a.id, a]))
+
+      // 1. Mevcut sıralamadaki hayvanları güncelle (hala sunucuda varlarsa)
+      const mergedList = prevAnimals
+        .filter(a => updatedMap.has(a.id))
+        .map(a => {
+          const updated = updatedMap.get(a.id)!
+          return {
+            ...a,
+            ...updated,
+            shares: updated.shares || []
+          }
+        })
+
+      // 2. Sunucuda yeni oluşturulmuş ama henüz yerel listede olmayan hayvanları ekle
+      const existingIds = new Set(mergedList.map(a => a.id))
+      const newAnimals = initialAnimals.filter(a => !existingIds.has(a.id))
+      
+      const combined = [...mergedList, ...newAnimals]
+
+      // 3. Kontenjanı dolan hayvanları listenin en altına sırala
+      return sortFullAnimalsToBottom(combined)
+    })
   }, [initialAnimals])
 
   // 1. Bekleyen Hisseleri Gruplandır (Referansa Göre)

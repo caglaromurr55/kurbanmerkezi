@@ -6,6 +6,7 @@ import { EditShareDialog } from '../../animals/edit-share-dialog'
 import { EditVideoDialog } from '../../animals/edit-video-dialog'
 import { Users, Scale, Tag } from 'lucide-react'
 import { PrintCardDialog } from './print-card-dialog'
+import { PrintAllCardsDialog } from './print-all-cards-dialog'
 
 export default async function YurtdisiAnimalsPage() {
   const supabase = await createClient()
@@ -29,7 +30,15 @@ export default async function YurtdisiAnimalsPage() {
             <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 border-l-4 border-blue-500 pl-3">Yurtdışı Kurbanlıklar</h1>
             <p className="text-slate-500 font-medium pl-4">Yurtdışı operasyonlarındaki hayvan eşleştirmeleri ve kurbanlıklar.</p>
         </div>
-        {activeCampaign && <AddAnimalDialog campaignId={activeCampaign.id} defaultRegion="YURTDISI" />}
+        <div className="flex items-center gap-2">
+          {activeCampaign && (
+            <PrintAllCardsDialog 
+              animals={animals} 
+              campaignYear={activeCampaign.year} 
+            />
+          )}
+          {activeCampaign && <AddAnimalDialog campaignId={activeCampaign.id} defaultRegion="YURTDISI" />}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

@@ -19,7 +19,7 @@ function SharesTable({ shares, currentPage, path = '/dashboard/shares' }: { shar
   const paginatedShares = shares.slice(offset, offset + limit)
 
   return (
-    <div className="space-y-4 mt-4">
+    <div className="space-y-4 mt-4 print:hidden">
       <div className="glass-card rounded-[20px] overflow-x-auto w-full">
         <Table>
           <TableHeader className="bg-slate-50/80">
@@ -129,6 +129,75 @@ function SharesTable({ shares, currentPage, path = '/dashboard/shares' }: { shar
   )
 }
 
+function PrintSharesTable({ shares, title }: { shares: any[], title: string }) {
+  return (
+    <div className="hidden print:block w-full mt-4 text-black bg-white">
+      <div className="flex flex-col gap-1 mb-4 border-b border-slate-300 pb-2">
+        <h2 className="text-xl font-bold text-slate-800">{title}</h2>
+        <span className="text-xs text-slate-500 font-semibold">Toplam Kayıt Sayısı: {shares.length}</span>
+      </div>
+      <div className="border border-slate-300 rounded-[12px] overflow-hidden w-full bg-white shadow-none">
+        <table className="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr className="bg-slate-50 border-b border-slate-300">
+              <th className="p-3 font-bold border-r border-slate-200 w-[5%] text-slate-700">#</th>
+              <th className="p-3 font-bold border-r border-slate-200 w-[22%] text-slate-700">Bağışçı Adı</th>
+              <th className="p-3 font-bold border-r border-slate-200 w-[15%] text-slate-700">Telefon</th>
+              <th className="p-3 font-bold border-r border-slate-200 w-[18%] text-slate-700">Referans</th>
+              <th className="p-3 font-bold border-r border-slate-200 w-[25%] text-slate-700 text-center">Bakiye Bilgisi</th>
+              <th className="p-3 font-bold text-slate-700">Eşleşen Kurban</th>
+            </tr>
+          </thead>
+          <tbody>
+            {shares.map((share, idx) => {
+              const remaining = Math.max(0, Number(share.sale_price || 0) - Number(share.total_paid || 0))
+              const paymentLabel = share.payment_status === 'PAID' ? 'ÖDENDİ' : share.payment_status === 'PARTIAL' ? 'KISMİ' : 'ÖDENMEDİ';
+              return (
+                <tr key={share.id} className="border-b border-slate-200 last:border-0 hover:bg-slate-50/50">
+                  <td className="p-3 border-r border-slate-200 font-semibold text-slate-500 text-center">{idx + 1}</td>
+                  <td className="p-3 border-r border-slate-200 font-bold text-slate-800">{share.donor_name}</td>
+                  <td className="p-3 border-r border-slate-200 font-medium text-slate-700 tracking-wide">{share.donor_phone}</td>
+                  <td className="p-3 border-r border-slate-200 font-semibold text-slate-700">
+                    {share.reference_name ? (
+                      <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-100">
+                        {share.reference_name}
+                      </span>
+                    ) : '-'}
+                  </td>
+                  <td className="p-3 border-r border-slate-200 text-xs">
+                    <div className="flex justify-between items-center gap-4 max-w-[240px] mx-auto text-[11px]">
+                      <span className="text-slate-500 font-medium">Satış: <strong className="text-slate-700 font-bold">{share.sale_price || 0} {share.currency}</strong></span>
+                      <span className="text-emerald-600 font-medium">Ödenen: <strong className="font-bold">{share.total_paid || 0} {share.currency}</strong></span>
+                      <span className={`${remaining > 0 ? 'text-rose-600' : 'text-slate-400'} font-bold`}>Kalan: {remaining} {share.currency}</span>
+                      <span className={`text-[9px] font-extrabold uppercase ml-1 ${share.payment_status === 'PAID' ? 'text-emerald-600' : share.payment_status === 'PARTIAL' ? 'text-amber-500' : 'text-rose-500'}`}>
+                        {paymentLabel}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="p-3 text-slate-700 font-semibold">
+                    {share.animals ? (
+                      <span>
+                        {share.animals.type === 'BUYUKBAS' ? 'Büyükbaş' : 'Küçükbaş'} • {share.animals.ear_tag || 'İsimsiz'}
+                      </span>
+                    ) : (
+                      <span className="text-slate-400 font-medium italic text-xs">Havuza Bırakıldı</span>
+                    )}
+                  </td>
+                </tr>
+              )
+            })}
+            {shares.length === 0 && (
+              <tr>
+                <td colSpan={6} className="p-8 text-center text-slate-400 font-medium italic">Kayıt bulunmuyor.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
 export default async function SharesPage(props: { searchParams?: Promise<{ [key: string]: string | undefined }> }) {
   try {
     const supabase = await createClient()
@@ -210,10 +279,12 @@ export default async function SharesPage(props: { searchParams?: Promise<{ [key:
           </div>
         </div>
 
-        <ListFilters />
+        <div className="print:hidden">
+          <ListFilters />
+        </div>
 
         <Tabs defaultValue="yurtici" className="w-full">
-          <TabsList className="bg-slate-100/80 p-1 border border-slate-200/60 rounded-xl max-w-full overflow-x-auto flex h-auto justify-start">
+          <TabsList className="bg-slate-100/80 p-1 border border-slate-200/60 rounded-xl max-w-full overflow-x-auto flex h-auto justify-start print:hidden">
             <TabsTrigger value="yurtici" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm px-4 py-2 font-semibold">
               Yurtiçi Hisseler <Badge variant="secondary" className="ml-2 bg-slate-200/50">{yurticiHisseler.length}</Badge>
             </TabsTrigger>
@@ -226,12 +297,15 @@ export default async function SharesPage(props: { searchParams?: Promise<{ [key:
           </TabsList>
           <TabsContent value="yurtici" className="mt-2 outline-none">
             <SharesTable shares={yurticiHisseler} currentPage={currentPage} />
+            <PrintSharesTable shares={yurticiHisseler} title="Yurtiçi Hissedar Listesi" />
           </TabsContent>
           <TabsContent value="yurtici_bagis" className="mt-2 outline-none">
             <SharesTable shares={yurticiBagislar} currentPage={currentPage} />
+            <PrintSharesTable shares={yurticiBagislar} title="Yurtiçi Bağış Listesi" />
           </TabsContent>
           <TabsContent value="adak_akika" className="mt-2 outline-none">
             <SharesTable shares={adakAkikalar} currentPage={currentPage} />
+            <PrintSharesTable shares={adakAkikalar} title="Adak / Akika Listesi" />
           </TabsContent>
         </Tabs>
       </div>

@@ -38,7 +38,7 @@ export default async function AnimalsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 print:hidden">
           {animals.map((animal) => {
               const currentSharesCount = animal.shares?.length || 0;
               const isFull = currentSharesCount >= animal.share_capacity;
@@ -141,6 +141,78 @@ export default async function AnimalsPage() {
                 <p className="text-sm mt-1">Sağ üstten "Hayvan Ekle" butonunu kullanarak kurbanlıkları sisteme dahil edin.</p>
               </div>
           )}
+      </div>
+
+      {/* Yazdırma Esnasında Görünecek Temiz A4 Hayvan Listesi Tablosu */}
+      <div className="hidden print:block w-full mt-4">
+        <div className="border border-slate-300 rounded-[12px] overflow-hidden w-full text-black bg-white shadow-none">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-300">
+                <th className="p-3 font-bold border-r border-slate-200 w-[12%] text-slate-700">Küpe No</th>
+                <th className="p-3 font-bold border-r border-slate-200 w-[10%] text-slate-700">Tür</th>
+                <th className="p-3 font-bold border-r border-slate-200 w-[16%] text-slate-700">Kilo Bilgisi</th>
+                <th className="p-3 font-bold border-r border-slate-200 w-[12%] text-slate-700">Canlı Kg ₺</th>
+                <th className="p-3 font-bold border-r border-slate-200 w-[12%] text-slate-700">Durum</th>
+                <th className="p-3 font-bold w-[38%] text-slate-700">Hissedarlar ve Ödeme Durumu</th>
+              </tr>
+            </thead>
+            <tbody>
+              {animals.map((animal) => {
+                const currentShares = animal.shares || []
+                return (
+                  <tr key={animal.id} className="border-b border-slate-200 last:border-0 hover:bg-slate-50/50">
+                    <td className="p-3 font-bold border-r border-slate-200 text-slate-800">
+                      <div className="flex flex-col gap-1">
+                        <span>{animal.ear_tag || 'İsimsiz'}</span>
+                        {animal.weight_group && (
+                          <span className="text-[9px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-1 rounded w-max">
+                            {animal.weight_group}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="p-3 border-r border-slate-200 font-semibold uppercase text-slate-700">
+                      {animal.type === 'BUYUKBAS' ? 'Büyükbaş' : 'Küçükbaş'}
+                    </td>
+                    <td className="p-3 border-r border-slate-200 font-medium text-slate-700">
+                      {animal.initial_weight || 0} KG → {animal.final_weight || 0} KG
+                    </td>
+                    <td className="p-3 border-r border-slate-200 font-semibold text-slate-800">
+                      ₺{animal.price_per_kg || 0}
+                    </td>
+                    <td className="p-3 border-r border-slate-200 font-bold uppercase text-[10px] text-slate-700">
+                      {animal.status === 'PENDING' && 'Bekliyor'}
+                      {animal.status === 'SLAUGHTERED' && 'Kesildi'}
+                      {animal.status === 'BUTCHERED' && 'Parçalandı'}
+                      {animal.status === 'COMPLETED' && 'Dağıtıldı'}
+                    </td>
+                    <td className="p-3">
+                      <div className="flex flex-col gap-1">
+                        {currentShares.map((share: any, idx: number) => {
+                          const paymentLabel = share.payment_status === 'PAID' ? 'ÖDENDİ' : share.payment_status === 'PARTIAL' ? 'KISMİ' : 'ÖDENMEDİ';
+                          return (
+                            <div key={share.id} className="flex justify-between items-center text-[11px] border-b border-slate-100 last:border-0 pb-0.5">
+                              <span className="font-semibold text-slate-800">
+                                {idx + 1}. {share.donor_name} {share.reference_name ? `(${share.reference_name})` : ''}
+                              </span>
+                              <span className={`text-[9px] font-extrabold uppercase ${share.payment_status === 'PAID' ? 'text-emerald-600' : share.payment_status === 'PARTIAL' ? 'text-amber-500' : 'text-rose-500'}`}>
+                                {paymentLabel}
+                              </span>
+                            </div>
+                          )
+                        })}
+                        {currentShares.length === 0 && (
+                          <span className="text-slate-400 font-medium italic">Henüz hissedar atanmamış.</span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )
