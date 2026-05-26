@@ -137,6 +137,56 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
               size: landscape;
               margin: 0;
             }
+
+            /* Scale up sizes for printing to look exactly like the screen preview */
+            .card-left-flag {
+              width: 24mm !important;
+              height: 24mm !important;
+            }
+            .card-center-logo {
+              width: 32mm !important;
+              height: 24mm !important;
+            }
+            .card-right-flag {
+              width: 24mm !important;
+              height: 24mm !important;
+            }
+            .card-agd-text-1 {
+              font-size: 16pt !important;
+            }
+            .card-agd-text-2 {
+              font-size: 7.5pt !important;
+            }
+            .card-slaughter-box {
+              width: 60mm !important;
+              height: 110mm !important;
+              border: 3px solid #000000 !important;
+            }
+            .card-slaughter-number {
+              font-size: 64pt !important;
+              font-weight: 900 !important;
+            }
+            .card-slaughter-label {
+              font-size: 10pt !important;
+              font-weight: 800 !important;
+            }
+            .card-slaughter-country {
+              font-size: 12pt !important;
+              font-weight: 900 !important;
+            }
+            .card-share-row {
+              border-bottom: 2.5px solid #000000 !important;
+              padding-bottom: 1.5mm !important;
+              margin-bottom: 1.5mm !important;
+            }
+            .card-share-number {
+              font-size: 13pt !important;
+              width: 6mm !important;
+            }
+            .card-share-name {
+              font-size: 15pt !important;
+              font-weight: 900 !important;
+            }
           }
         `}</style>
 
@@ -201,7 +251,7 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
                 <div className="flex justify-between items-center">
                   <Label htmlFor="left_flag_file" className="text-[10px] font-bold text-slate-500">Sol Bayrak (Çad)</Label>
                   {leftFlagImage && (
-                    <button onClick={() => handleResetImage('left')} className="text-[9px] text-red-550 font-bold hover:underline cursor-pointer bg-transparent border-0 p-0">Sıfırla</button>
+                    <button onClick={() => handleResetImage('left')} className="text-[9px] text-red-555 font-bold hover:underline cursor-pointer bg-transparent border-0 p-0">Sıfırla</button>
                   )}
                 </div>
                 <Input
@@ -217,7 +267,7 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
                 <div className="flex justify-between items-center">
                   <Label htmlFor="center_logo_file" className="text-[10px] font-bold text-slate-500">Orta Logo (AGD)</Label>
                   {centerLogoImage && (
-                    <button onClick={() => handleResetImage('center')} className="text-[9px] text-red-550 font-bold hover:underline cursor-pointer bg-transparent border-0 p-0">Sıfırla</button>
+                    <button onClick={() => handleResetImage('center')} className="text-[9px] text-red-555 font-bold hover:underline cursor-pointer bg-transparent border-0 p-0">Sıfırla</button>
                   )}
                 </div>
                 <Input
@@ -233,7 +283,7 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
                 <div className="flex justify-between items-center">
                   <Label htmlFor="right_flag_file" className="text-[10px] font-bold text-slate-500">Sağ Bayrak (Türkiye)</Label>
                   {rightFlagImage && (
-                    <button onClick={() => handleResetImage('right')} className="text-[9px] text-red-550 font-bold hover:underline cursor-pointer bg-transparent border-0 p-0">Sıfırla</button>
+                    <button onClick={() => handleResetImage('right')} className="text-[9px] text-red-555 font-bold hover:underline cursor-pointer bg-transparent border-0 p-0">Sıfırla</button>
                   )}
                 </div>
                 <Input
@@ -327,13 +377,13 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
           {/* Print Card Container */}
           <div 
             id="print-card-area" 
-            className="w-[520px] h-[360px] bg-white border border-slate-300 rounded-lg p-5 flex flex-col justify-between font-sans relative shadow-md shrink-0 select-none bg-white text-black"
+            className="w-[520px] h-[360px] bg-white border border-slate-300 rounded-[20px] p-5 flex flex-col justify-between font-sans relative shadow-md shrink-0 select-none bg-white text-black"
           >
             {/* Top Row: Flags and AGD Logo */}
             <div className="flex items-center justify-between w-full border-b-2 border-slate-100 pb-3">
               {/* Left Flag (Chad Flag SVG or Custom Image) */}
               <div 
-                className="rounded-full overflow-hidden flex border border-slate-200 shadow-sm shrink-0 items-center justify-center bg-slate-50"
+                className="card-left-flag rounded-full overflow-hidden flex border border-slate-200 shadow-sm shrink-0 items-center justify-center bg-slate-50"
                 style={{ width: leftFlagSize + 'px', height: leftFlagSize + 'px' }}
               >
                 {leftFlagImage ? (
@@ -353,14 +403,14 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
                   <img 
                     src={centerLogoImage} 
                     alt="Orta Logo" 
-                    className="object-contain" 
+                    className="card-center-logo object-contain" 
                     style={{ width: centerLogoSize + 'px', height: centerLogoSize + 'px' }}
                   />
                 ) : (
                   <div className="flex items-center gap-2">
                     <svg 
                       viewBox="0 0 100 100" 
-                      className="text-blue-600 fill-none stroke-current shrink-0"
+                      className="card-center-logo text-blue-600 fill-none stroke-current shrink-0"
                       style={{ width: centerLogoSize + 'px', height: centerLogoSize + 'px' }}
                     >
                       <circle cx="50" cy="50" r="45" strokeWidth="2.5" />
@@ -370,8 +420,8 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
                       <path d="M58,58 A15,15 0 1,0 35,42 A12,12 0 1,1 58,58" fill="#FFF" strokeWidth="0.5" />
                     </svg>
                     <div className="flex flex-col text-left">
-                      <span className="text-base font-black tracking-tight text-slate-800 leading-none">AGD</span>
-                      <span className="text-[5.5px] font-black uppercase tracking-widest text-slate-500 mt-0.5">ANADOLU GENÇLİK DERNEĞİ</span>
+                      <span className="card-agd-text-1 text-base font-black tracking-tight text-slate-800 leading-none">AGD</span>
+                      <span className="card-agd-text-2 text-[5.5px] font-black uppercase tracking-widest text-slate-500 mt-0.5">ANADOLU GENÇLİK DERNEĞİ</span>
                     </div>
                   </div>
                 )}
@@ -379,7 +429,7 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
 
               {/* Right Flag (Turkish Flag SVG or Custom Image) */}
               <div 
-                className="rounded-full overflow-hidden shrink-0 border border-slate-200 shadow-sm flex items-center justify-center bg-[#E30A17] relative"
+                className="card-right-flag rounded-full overflow-hidden shrink-0 border border-slate-200 shadow-sm flex items-center justify-center bg-[#E30A17] relative"
                 style={{ width: rightFlagSize + 'px', height: rightFlagSize + 'px' }}
               >
                 {rightFlagImage ? (
@@ -398,16 +448,16 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
             {/* Main Section */}
             <div className="flex-1 flex gap-5 mt-4">
               {/* Left Column: Slaughter Order Box */}
-              <div className="w-[120px] border-[3px] border-black p-2 flex flex-col justify-between items-center text-center rounded-sm shrink-0">
+              <div className="card-slaughter-box w-[120px] border-[3px] border-black p-2 flex flex-col justify-between items-center text-center rounded-[16px] shrink-0">
                 <div className="flex-1 flex items-center justify-center">
-                  <span className="text-[64px] font-black text-black tracking-tighter uppercase leading-none break-all max-w-[100px]">
+                  <span className="card-slaughter-number text-[64px] font-black text-black tracking-tighter uppercase leading-none break-all max-w-[100px]">
                     {slaughterOrder || '1'}
                   </span>
                 </div>
                 <div className="w-full border-t-[3px] border-black my-2"></div>
                 <div className="flex flex-col gap-0.5 uppercase leading-none">
-                  <span className="text-[7px] font-extrabold tracking-widest text-slate-500">KURBAN {yearInput}</span>
-                  <span className="text-[8px] font-black tracking-wider text-black mt-1 break-words max-w-[100px]">{regionInput}</span>
+                  <span className="card-slaughter-label text-[7px] font-extrabold tracking-widest text-slate-500">KURBAN {yearInput}</span>
+                  <span className="card-slaughter-country text-[8px] font-black tracking-wider text-black mt-1 break-words max-w-[100px]">{regionInput}</span>
                 </div>
               </div>
 
@@ -416,9 +466,9 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
                 {Array.from({ length: 7 }).map((_, idx) => {
                   const share = animal.shares?.[idx]
                   return (
-                    <div key={idx} className="w-full border-b-[2px] border-black flex items-end pb-0.5 text-black">
-                      <span className="text-[10px] font-black w-5 text-slate-400 shrink-0">{idx + 1}</span>
-                      <span className="text-xs font-black tracking-wide uppercase truncate leading-none flex-1">
+                    <div key={idx} className="card-share-row w-full border-b-[2px] border-black flex items-end pb-0.5 text-black">
+                      <span className="card-share-number text-[10px] font-black w-5 text-slate-400 shrink-0">{idx + 1}</span>
+                      <span className="card-share-name text-xs font-black tracking-wide uppercase truncate leading-none flex-1">
                         {share ? share.donor_name : '.................................................................'}
                       </span>
                     </div>
