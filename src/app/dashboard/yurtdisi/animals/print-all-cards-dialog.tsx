@@ -131,6 +131,28 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
         {/* Style block for print layout isolation */}
         <style jsx global>{`
           @media print {
+            * {
+              overflow: visible !important;
+              max-height: none !important;
+            }
+            html, body {
+              position: static !important;
+              height: auto !important;
+              overflow: visible !important;
+            }
+            div[role="dialog"], 
+            div[role="dialog"] *, 
+            [data-radix-portal],
+            [data-radix-portal] *,
+            .fixed,
+            .fixed * {
+              position: static !important;
+              width: auto !important;
+              height: auto !important;
+              max-height: none !important;
+              overflow: visible !important;
+              transform: none !important;
+            }
             body * {
               visibility: hidden !important;
             }
