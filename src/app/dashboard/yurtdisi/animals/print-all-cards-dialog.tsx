@@ -114,7 +114,143 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
   }
 
   const handlePrint = () => {
+    const printArea = document.getElementById('print-all-cards-area')
+    if (!printArea) return
+
+    const parentNode = printArea.parentNode
+    const nextSibling = printArea.nextSibling
+
+    // Create a style block to completely isolate the print layout
+    const style = document.createElement('style')
+    style.id = 'print-all-cards-style'
+    style.innerHTML = `
+      @media print {
+        /* Hide everything in body except our print area */
+        body > *:not(#print-all-cards-area) {
+          display: none !important;
+        }
+        
+        #print-all-cards-area {
+          display: block !important;
+          width: 100% !important;
+          height: auto !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          background: white !important;
+          position: static !important;
+          overflow: visible !important;
+        }
+
+        .print-card-page {
+          width: 270mm !important;
+          height: 180mm !important;
+          margin: 15mm auto !important;
+          padding: 10mm 15mm !important;
+          box-sizing: border-box !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: space-between !important;
+          background: white !important;
+          page-break-after: always !important;
+          break-after: page !important;
+          border: 3px solid #000000 !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+
+        @page {
+          size: landscape;
+          margin: 0;
+        }
+
+        /* Scale up sizes for printing to look exactly like the screen preview */
+        .card-left-flag {
+          width: 28mm !important;
+          height: 28mm !important;
+        }
+        .card-logo-container {
+          display: flex !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          gap: 4mm !important;
+        }
+        .card-center-logo {
+          height: 20mm !important;
+          object-fit: contain !important;
+        }
+        .card-district-container {
+          border-left: 2px solid #000000 !important;
+          padding-left: 3mm !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: center !important;
+        }
+        .card-district-text {
+          font-size: 13pt !important;
+          font-weight: 900 !important;
+          line-height: 1.1 !important;
+          letter-spacing: 0.05em !important;
+          color: #000000 !important;
+        }
+        .card-right-flag {
+          width: 28mm !important;
+          height: 28mm !important;
+        }
+        .card-slaughter-box {
+          width: 60mm !important;
+          height: 110mm !important;
+          border: 3px solid #000000 !important;
+        }
+        .card-slaughter-number {
+          font-size: 64pt !important;
+          font-weight: 900 !important;
+        }
+        .card-slaughter-label {
+          font-size: 10pt !important;
+          font-weight: 800 !important;
+        }
+        .card-slaughter-country {
+          font-size: 12pt !important;
+          font-weight: 900 !important;
+        }
+        .card-share-row {
+          border-bottom: 2.5px solid #000000 !important;
+          padding-bottom: 1.5mm !important;
+          margin-bottom: 1.5mm !important;
+        }
+        .card-share-number {
+          font-size: 13pt !important;
+          width: 6mm !important;
+        }
+        .card-share-name {
+          font-size: 15pt !important;
+          font-weight: 900 !important;
+        }
+      }
+    `
+    document.head.appendChild(style)
+
+    // Move print area to direct child of body
+    document.body.appendChild(printArea)
+
+    // Trigger standard browser print window
     window.print()
+
+    // Restore original DOM state after a safe timeout
+    setTimeout(() => {
+      // Remove style node
+      const styleNode = document.getElementById('print-all-cards-style')
+      if (styleNode) styleNode.remove()
+
+      // Restore print area to its original preview slot
+      if (parentNode) {
+        if (nextSibling) {
+          parentNode.insertBefore(printArea, nextSibling)
+        } else {
+          parentNode.appendChild(printArea)
+        }
+      }
+    }, 1000)
   }
 
   return (
@@ -128,147 +264,7 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
       </DialogTrigger>
       
       <DialogContent className="w-[95vw] sm:max-w-[950px] max-h-[95vh] overflow-y-auto flex flex-col md:flex-row gap-6 p-6">
-        <style jsx global>{`
-          @media print {
-            body * {
-              visibility: hidden !important;
-            }
-            /* Show ONLY our printable area and its contents */
-            #print-all-cards-area, #print-all-cards-area * {
-              visibility: visible !important;
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-            }
-            /* Make the printable container absolute and top-aligned */
-            #print-all-cards-area {
-              position: absolute !important;
-              left: 0 !important;
-              top: 0 !important;
-              width: 100% !important;
-              height: auto !important;
-              display: block !important;
-              background: white !important;
-              z-index: 999999 !important;
-              margin: 0 !important;
-              padding: 0 !important;
-              border: none !important;
-              box-shadow: none !important;
-            }
-            /* Reset only the specific ancestors that wrap the print area so they don't clip the absolute container */
-            html, body {
-              overflow: visible !important;
-              height: auto !important;
-              background: white !important;
-            }
-            .print-all-preview-container {
-              overflow: visible !important;
-              max-height: none !important;
-              height: auto !important;
-              position: static !important;
-              padding: 0 !important;
-              margin: 0 !important;
-              border: none !important;
-              background: transparent !important;
-              display: block !important;
-            }
-            div[role="dialog"] {
-              position: static !important;
-              overflow: visible !important;
-              max-height: none !important;
-              height: auto !important;
-              width: auto !important;
-              transform: none !important;
-              border: none !important;
-              background: transparent !important;
-              box-shadow: none !important;
-              padding: 0 !important;
-              margin: 0 !important;
-              display: block !important;
-            }
-            .print-card-page {
-              width: 270mm !important;
-              height: 180mm !important;
-              margin: 15mm auto !important;
-              padding: 10mm 15mm !important;
-              box-sizing: border-box !important;
-              display: flex !important;
-              flex-direction: column !important;
-              justify-content: space-between !important;
-              background: white !important;
-              page-break-after: always !important;
-              break-after: page !important;
-              border: 3px solid #000000 !important;
-            }
-            @page {
-              size: landscape;
-              margin: 0;
-            }
 
-            /* Scale up sizes for printing to look exactly like the screen preview */
-            .card-left-flag {
-              width: 28mm !important;
-              height: 28mm !important;
-            }
-            .card-logo-container {
-              display: flex !important;
-              flex-direction: row !important;
-              align-items: center !important;
-              gap: 4mm !important;
-            }
-            .card-center-logo {
-              height: 20mm !important;
-              object-fit: contain !important;
-            }
-            .card-district-container {
-              border-left: 2px solid #000000 !important;
-              padding-left: 3mm !important;
-              display: flex !important;
-              flex-direction: column !important;
-              justify-content: center !important;
-            }
-            .card-district-text {
-              font-size: 13pt !important;
-              font-weight: 900 !important;
-              line-height: 1.1 !important;
-              letter-spacing: 0.05em !important;
-              color: #000000 !important;
-            }
-            .card-right-flag {
-              width: 28mm !important;
-              height: 28mm !important;
-            }
-            .card-slaughter-box {
-              width: 60mm !important;
-              height: 110mm !important;
-              border: 3px solid #000000 !important;
-            }
-            .card-slaughter-number {
-              font-size: 64pt !important;
-              font-weight: 900 !important;
-            }
-            .card-slaughter-label {
-              font-size: 10pt !important;
-              font-weight: 800 !important;
-            }
-            .card-slaughter-country {
-              font-size: 12pt !important;
-              font-weight: 900 !important;
-            }
-            .card-share-row {
-              border-bottom: 2.5px solid #000000 !important;
-              padding-bottom: 1.5mm !important;
-              margin-bottom: 1.5mm !important;
-            }
-            .card-share-number {
-              font-size: 13pt !important;
-              width: 6mm !important;
-            }
-            .card-share-name {
-              font-size: 15pt !important;
-              font-weight: 900 !important;
-            }
-          }
-        `}</style>
 
         {/* LEFT COLUMN: Configuration */}
         <div className="flex-1 flex flex-col gap-4 max-w-[280px] print:hidden">
