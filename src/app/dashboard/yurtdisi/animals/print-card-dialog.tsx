@@ -19,6 +19,9 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
   const [yearInput, setYearInput] = useState(String(campaignYear || new Date().getFullYear()))
   const [regionInput, setRegionInput] = useState('AFRİKA-ÇAD')
   
+  const slaughterNumber = (slaughterOrder || '1').toString()
+  const isThreeDigits = slaughterNumber.length >= 3
+  
   // District/Branch Name with LocalStorage Persistence
   const [districtInput, setDistrictInput] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -187,6 +190,9 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
             .card-slaughter-number {
               font-size: 64pt !important;
               font-weight: 900 !important;
+            }
+            .print-fs-3digit {
+              font-size: 44pt !important;
             }
             .card-slaughter-label {
               font-size: 10pt !important;
@@ -460,8 +466,8 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
               {/* Left Column: Slaughter Order Box */}
               <div className="card-slaughter-box w-[120px] border-[3px] border-black p-2 flex flex-col justify-between items-center text-center rounded-[16px] shrink-0">
                 <div className="flex-1 flex items-center justify-center">
-                  <span className="card-slaughter-number text-[64px] font-black text-black tracking-tighter uppercase leading-none break-all max-w-[100px]">
-                    {slaughterOrder || '1'}
+                  <span className={`card-slaughter-number ${isThreeDigits ? 'text-[42px] print-fs-3digit' : 'text-[64px]'} font-black text-black tracking-tighter uppercase leading-none whitespace-nowrap`}>
+                    {slaughterNumber}
                   </span>
                 </div>
                 <div className="w-full border-t-[3px] border-black my-2"></div>
