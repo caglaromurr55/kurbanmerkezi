@@ -256,3 +256,114 @@ export async function unassignShareFromAnimal(formData: FormData) {
   revalidatePath('/dashboard/yurtdisi/animals')
 }
 
+export async function createSharesBatch(formData: FormData) {
+  const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
+  
+  const { data: userData } = await supabase.from('users').select('tenant_id').eq('id', user.id).single()
+
+  const donorNamesRaw = formData.get('donor_names_raw') as string || ''
+  const donor_phone = formData.get('donor_phone') as string || ''
+  const campaign_id = formData.get('campaign_id') as string
+  
+  const share_type = formData.get('share_type') as string || 'HISSE_SATISI'
+  const region = formData.get('region') as string || 'YURTICI'
+  const reference_name = formData.get('reference_name') as string || null
+  const currency = formData.get('currency') as string || 'TRY'
+  const sale_price = parseFloat(formData.get('sale_price') as string || '0')
+  const exchange_rate = parseFloat(formData.get('exchange_rate') as string || '1')
+  
+  const initial_payment = parseFloat(formData.get('initial_payment') as string || '0')
+  const payment_method = formData.get('payment_method') as string || 'CASH'
+
+  // Parse names: split by newline, trim and filter empty ones
+  const donorNames = donorNamesRaw.split('\n').map(n => n.trim()).filter(n => n.length > 0)
+  if (donorNames.length === 0) throw new Error('En az bir bağışçı ismi girilmelidir.')
+
+  let payment_status = 'PENDING'
+  if (initial_payment > 0) payment_status = 'PARTIAL'
+  if (initial_payment >= sale_price - 0.01 && sale_price > 0) payment_status = 'PAID'
+
+  // Build payloads for batch insert
+  const sharesPayload = donorNames.map(name => ({
+    tenant_id: userData?.tenant_id,
+    campaign_id,
+    donor_name: name,
+    donor_phone,
+    share_type,
+    region,
+    reference_name,
+    currency,
+    payment_status,
+    sale_price,
+    exchange_rate,
+    total_paid: initial_payment,
+    status: 'PENDING'
+  }))
+
+  // Insert shares in a batch!
+  const { data: insertedShares, error } = await supabase.from('shares').insert(sharesPayload).select()
+
+  if (error) {
+    console.error('Error batch inserting shares:', error)
+    throw new Error(error.message)
+  }
+
+  // Create transactions in batch if there's any initial payment!
+  if (initial_payment > 0 && insertedShares && insertedShares.length > 0) {
+      const txsPayload = insertedShares.map(share => ({
+          tenant_id: userData?.tenant_id,
+          campaign_id,
+          share_id: share.id,
+          type: 'INCOME',
+          amount: initial_payment,
+          currency: currency,
+          payment_method: payment_method,
+          description: `${share.donor_name} - Toplu Peşinat Tahsilatı`,
+          exchange_rate: exchange_rate
+      }))
+      await supabase.from('transactions').insert(txsPayload)
+  }
+
+  // Yurtdışı için otomatik hayvan üretim mantığı
+  if (region === 'YURTDISI') {
+      // 1. Toplam kapasite hesapla
+      const { data: allAnimals } = await supabase.from('animals').select('id, share_capacity').eq('campaign_id', campaign_id).eq('region', 'YURTDISI')
+      const totalCapacity = allAnimals?.reduce((acc, a) => acc + (a.share_capacity || 7), 0) || 0
+      
+      // 2. Toplam hisse hesapla
+      const { count: totalShares } = await supabase.from('shares').select('*', { count: 'exact', head: true }).eq('campaign_id', campaign_id).eq('region', 'YURTDISI')
+      const sharesCount = totalShares || 0
+
+      // 3. Eğer kapasite aşıldıysa YENİ HAYVAN(LAR) OLUŞTUR
+      if (sharesCount > totalCapacity) {
+         const capacityNeeded = sharesCount - totalCapacity
+         const newAnimalsCount = Math.ceil(capacityNeeded / 7)
+         
+         const newAnimalsPayload = []
+         for (let i = 0; i < newAnimalsCount; i++) {
+            const newEarTag = `YD-${Date.now().toString().slice(-4)}${Math.floor(Math.random()*100)}`
+            newAnimalsPayload.push({
+                campaign_id,
+                tenant_id: userData?.tenant_id,
+                region: 'YURTDISI',
+                type: 'BUYUKBAS',
+                ear_tag: newEarTag,
+                share_capacity: 7,
+                status: 'PENDING',
+                price_per_kg: 0,
+                initial_weight: 0,
+                final_weight: 0
+            })
+         }
+         await supabase.from('animals').insert(newAnimalsPayload)
+      }
+  }
+
+  revalidatePath('/dashboard/shares')
+  revalidatePath('/dashboard/animals')
+  revalidatePath('/dashboard/yurtdisi')
+}
+

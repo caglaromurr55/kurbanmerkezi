@@ -5,10 +5,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { AddShareDialog } from '@/app/dashboard/shares/add-share-dialog'
+import { BatchAddShareDialog } from '@/app/dashboard/shares/batch-add-share-dialog'
 import { EditShareDialog } from '@/app/dashboard/animals/edit-share-dialog'
 import { YurtdisiSettingsDialog } from './yurtdisi-settings-dialog'
 import { AddPaymentDialog } from '@/app/dashboard/shares/add-payment-dialog'
 import { ListFilters } from '@/components/list-filters'
+import { ExcelSharesExportButton } from './excel-shares-export-button'
 
 function SharesTable({ shares, currentPage, path = '/dashboard/yurtdisi' }: { shares: any[], currentPage: number, path?: string }) {
   const limit = 25
@@ -222,6 +224,7 @@ export default async function YurtdisiDashboardPage(props: { searchParams?: Prom
                    </Button>
                  </Link>
                  <YurtdisiSettingsDialog settings={allSettings} />
+                 <BatchAddShareDialog campaignId={activeCampaign.id} defaultInternationalPrice={defIntPrice} defaultInternationalSalePriceTl={defIntSalePriceTl} fixedUsdRate={usdRate} defaultRegion="YURTDISI" />
                  <AddShareDialog campaignId={activeCampaign.id} animals={[]} defaultInternationalPrice={defIntPrice} defaultInternationalSalePriceTl={defIntSalePriceTl} fixedUsdRate={usdRate} defaultRegion="YURTDISI" />
               </div>
             )}
@@ -276,10 +279,13 @@ export default async function YurtdisiDashboardPage(props: { searchParams?: Prom
         </div>
 
         <div>
-           <h2 className="text-xl font-bold tracking-tight text-slate-800 mt-4 border-b border-slate-200 pb-2 flex items-center gap-2">
-               <Globe className="w-5 h-5 text-blue-500" />
-               Tüm Yurtdışı İşlemleri
-           </h2>
+           <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-2 mt-4 gap-4">
+              <h2 className="text-xl font-bold tracking-tight text-slate-800 flex items-center gap-2">
+                  <Globe className="w-5 h-5 text-blue-500" />
+                  Tüm Yurtdışı İşlemleri
+              </h2>
+              <ExcelSharesExportButton shares={yurtdisiShares} />
+           </div>
            <ListFilters showTypes={false} />
            <SharesTable shares={yurtdisiShares} currentPage={currentPage} />
         </div>
