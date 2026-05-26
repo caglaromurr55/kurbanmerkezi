@@ -38,12 +38,35 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
     return null
   })
 
-  // Synchronize custom images if modal opens/reopens (so they sync with single card selections)
-  const syncImagesFromLocalStorage = () => {
+  // Logo Size States (in pixels) with LocalStorage Persistence
+  const [leftFlagSize, setLeftFlagSize] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('kurban_card_left_size') || '48'
+    }
+    return '48'
+  })
+  const [centerLogoSize, setCenterLogoSize] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('kurban_card_center_size') || '48'
+    }
+    return '48'
+  })
+  const [rightFlagSize, setRightFlagSize] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('kurban_card_right_size') || '48'
+    }
+    return '48'
+  })
+
+  // Synchronize custom images & sizes if modal opens/reopens (syncs with single card dialog selections)
+  const syncFromLocalStorage = () => {
     if (typeof window !== 'undefined') {
       setLeftFlagImage(localStorage.getItem('kurban_card_left_flag'))
       setCenterLogoImage(localStorage.getItem('kurban_card_center_logo'))
       setRightFlagImage(localStorage.getItem('kurban_card_right_flag'))
+      setLeftFlagSize(localStorage.getItem('kurban_card_left_size') || '48')
+      setCenterLogoSize(localStorage.getItem('kurban_card_center_size') || '48')
+      setRightFlagSize(localStorage.getItem('kurban_card_right_size') || '48')
     }
   }
 
@@ -88,7 +111,7 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
   return (
     <Dialog open={open} onOpenChange={(val) => {
       setOpen(val)
-      if (val) syncImagesFromLocalStorage()
+      if (val) syncFromLocalStorage()
     }}>
       <DialogTrigger render={<Button className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-md cursor-pointer gap-1.5" />}>
         <Layers className="w-4 h-4" />
@@ -104,6 +127,8 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
             }
             #print-all-cards-area, #print-all-cards-area * {
               visibility: visible !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
             }
             #print-all-cards-area {
               position: absolute !important;
@@ -118,8 +143,9 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
               display: block !important;
             }
             .print-card-page {
-              width: 297mm !important;
-              height: 210mm !important;
+              width: 270mm !important;
+              height: 180mm !important;
+              margin: 15mm auto !important;
               padding: 15mm 20mm !important;
               box-sizing: border-box !important;
               display: flex !important;
@@ -128,8 +154,7 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
               background: white !important;
               page-break-after: always !important;
               break-after: page !important;
-              border: none !important;
-              margin: 0 !important;
+              border: 3px solid #000000 !important;
             }
             @page {
               size: landscape;
@@ -151,7 +176,7 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
             </DialogHeader>
           </div>
 
-          <div className="flex flex-col gap-3.5 border-t pt-4">
+          <div className="flex flex-col gap-3.5 border-t pt-4 max-h-[55vh] overflow-y-auto pr-1">
             <div className="grid gap-1.5">
               <Label htmlFor="global_start_sequence" className="text-xs font-bold text-slate-500 flex items-center gap-1">
                 <Tag className="w-3.5 h-3.5" /> Başlangıç Kesim Sırası
@@ -243,6 +268,71 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
                 />
               </div>
             </div>
+
+            {/* Logo and Flag Size Settings */}
+            <div className="flex flex-col gap-3 border-t pt-4">
+              <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Logo & Bayrak Boyutları</span>
+              
+              <div className="grid gap-1">
+                <Label htmlFor="global_left_flag_size" className="text-[10px] font-bold text-slate-500 flex justify-between">
+                  <span>Sol Bayrak Genişliği</span>
+                  <span className="text-emerald-600">{leftFlagSize}px</span>
+                </Label>
+                <input
+                  id="global_left_flag_size"
+                  type="range"
+                  min="20"
+                  max="100"
+                  value={leftFlagSize}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setLeftFlagSize(val)
+                    localStorage.setItem('kurban_card_left_size', val)
+                  }}
+                  className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                />
+              </div>
+
+              <div className="grid gap-1">
+                <Label htmlFor="global_center_logo_size" className="text-[10px] font-bold text-slate-500 flex justify-between">
+                  <span>Orta Logo Genişliği</span>
+                  <span className="text-emerald-600">{centerLogoSize}px</span>
+                </Label>
+                <input
+                  id="global_center_logo_size"
+                  type="range"
+                  min="20"
+                  max="120"
+                  value={centerLogoSize}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setCenterLogoSize(val)
+                    localStorage.setItem('kurban_card_center_size', val)
+                  }}
+                  className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                />
+              </div>
+
+              <div className="grid gap-1">
+                <Label htmlFor="global_right_flag_size" className="text-[10px] font-bold text-slate-500 flex justify-between">
+                  <span>Sağ Bayrak Genişliği</span>
+                  <span className="text-emerald-600">{rightFlagSize}px</span>
+                </Label>
+                <input
+                  id="global_right_flag_size"
+                  type="range"
+                  min="20"
+                  max="100"
+                  value={rightFlagSize}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setRightFlagSize(val)
+                    localStorage.setItem('kurban_card_right_size', val)
+                  }}
+                  className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                />
+              </div>
+            </div>
           </div>
 
           <div className="mt-auto border-t pt-4 flex flex-col gap-2">
@@ -272,26 +362,38 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
                 >
                   {/* Top Row: Flags and AGD Logo */}
                   <div className="flex items-center justify-between w-full border-b-2 border-slate-100 pb-3">
-                    {/* Left Flag (Chad Flag or Custom Image) */}
-                    <div className="w-12 h-12 rounded-full overflow-hidden flex border border-slate-200 shadow-sm shrink-0 items-center justify-center bg-slate-50">
+                    {/* Left Flag (Chad Flag SVG or Custom Image) */}
+                    <div 
+                      className="rounded-full overflow-hidden flex border border-slate-200 shadow-sm shrink-0 items-center justify-center bg-slate-50"
+                      style={{ width: leftFlagSize + 'px', height: leftFlagSize + 'px' }}
+                    >
                       {leftFlagImage ? (
                         <img src={leftFlagImage} alt="Sol Bayrak" className="w-full h-full object-cover" />
                       ) : (
-                        <>
-                          <div className="flex-1 h-full bg-[#002664]"></div>
-                          <div className="flex-1 h-full bg-[#FECB00]"></div>
-                          <div className="flex-1 h-full bg-[#C60C30]"></div>
-                        </>
+                        <svg viewBox="0 0 3 2" className="w-full h-full object-cover rounded-full">
+                          <rect x="0" y="0" width="1" height="2" fill="#002664" />
+                          <rect x="1" y="0" width="1" height="2" fill="#FECB00" />
+                          <rect x="2" y="0" width="1" height="2" fill="#C60C30" />
+                        </svg>
                       )}
                     </div>
                     
                     {/* Center Logo (AGD or Custom Image) */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 shrink-0">
                       {centerLogoImage ? (
-                        <img src={centerLogoImage} alt="Orta Logo" className="w-12 h-12 object-contain" />
+                        <img 
+                          src={centerLogoImage} 
+                          alt="Orta Logo" 
+                          className="object-contain" 
+                          style={{ width: centerLogoSize + 'px', height: centerLogoSize + 'px' }}
+                        />
                       ) : (
-                        <>
-                          <svg viewBox="0 0 100 100" width="38" height="38" className="text-blue-600 fill-none stroke-current shrink-0">
+                        <div className="flex items-center gap-2">
+                          <svg 
+                            viewBox="0 0 100 100" 
+                            className="text-blue-600 fill-none stroke-current shrink-0"
+                            style={{ width: centerLogoSize + 'px', height: centerLogoSize + 'px' }}
+                          >
                             <circle cx="50" cy="50" r="45" strokeWidth="2.5" />
                             <path d="M5,50 H95 M50,5 V95" strokeWidth="1.5" />
                             <path d="M15,25 Q50,45 85,25 M15,75 Q50,55 85,75" strokeWidth="1.5" />
@@ -302,19 +404,23 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
                             <span className="text-base font-black tracking-tight text-slate-800 leading-none">AGD</span>
                             <span className="text-[5.5px] font-black uppercase tracking-widest text-slate-500 mt-0.5">ANADOLU GENÇLİK DERNEĞİ</span>
                           </div>
-                        </>
+                        </div>
                       )}
                     </div>
 
-                    {/* Right Flag (Turkish Flag or Custom Image) */}
-                    <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-slate-200 shadow-sm flex items-center justify-center bg-[#E30A17] relative">
+                    {/* Right Flag (Turkish Flag SVG or Custom Image) */}
+                    <div 
+                      className="rounded-full overflow-hidden shrink-0 border border-slate-200 shadow-sm flex items-center justify-center bg-[#E30A17] relative"
+                      style={{ width: rightFlagSize + 'px', height: rightFlagSize + 'px' }}
+                    >
                       {rightFlagImage ? (
                         <img src={rightFlagImage} alt="Sağ Bayrak" className="w-full h-full object-cover" />
                       ) : (
-                        <svg viewBox="0 0 300 200" width="28" height="28" className="text-white fill-current">
-                          <circle cx="100" cy="100" r="50" fill="#FFF"/>
-                          <circle cx="112.5" cy="100" r="40" fill="#E30A17"/>
-                          <polygon points="145,100 128,109 134,91 118,82 138,82" fill="#FFF" transform="rotate(18 135 100)"/>
+                        <svg viewBox="0 0 100 100" className="w-full h-full object-cover rounded-full shrink-0">
+                          <circle cx="50" cy="50" r="50" fill="#E30A17" />
+                          <circle cx="43" cy="50" r="23" fill="#FFF" />
+                          <circle cx="49" cy="50" r="18.5" fill="#E30A17" />
+                          <polygon points="68,50 59,54.5 62.5,45.5 54.5,41 64.5,41" fill="#FFF" transform="rotate(18 63 50)"/>
                         </svg>
                       )}
                     </div>

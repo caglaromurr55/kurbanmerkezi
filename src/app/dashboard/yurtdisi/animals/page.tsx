@@ -7,6 +7,7 @@ import { EditVideoDialog } from '../../animals/edit-video-dialog'
 import { Users, Scale, Tag } from 'lucide-react'
 import { PrintCardDialog } from './print-card-dialog'
 import { PrintAllCardsDialog } from './print-all-cards-dialog'
+import { ExcelExportButton } from './excel-export-button'
 
 export default async function YurtdisiAnimalsPage() {
   const supabase = await createClient()
@@ -31,6 +32,12 @@ export default async function YurtdisiAnimalsPage() {
             <p className="text-slate-500 font-medium pl-4">Yurtdışı operasyonlarındaki hayvan eşleştirmeleri ve kurbanlıklar.</p>
         </div>
         <div className="flex items-center gap-2">
+          {activeCampaign && (
+            <ExcelExportButton 
+              animals={animals} 
+              campaignName={activeCampaign.name} 
+            />
+          )}
           {activeCampaign && (
             <PrintAllCardsDialog 
               animals={animals} 

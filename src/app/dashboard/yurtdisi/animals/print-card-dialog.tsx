@@ -39,6 +39,26 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
     return null
   })
 
+  // Logo Size States (in pixels) with LocalStorage Persistence
+  const [leftFlagSize, setLeftFlagSize] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('kurban_card_left_size') || '48'
+    }
+    return '48'
+  })
+  const [centerLogoSize, setCenterLogoSize] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('kurban_card_center_size') || '48'
+    }
+    return '48'
+  })
+  const [rightFlagSize, setRightFlagSize] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('kurban_card_right_size') || '48'
+    }
+    return '48'
+  })
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'left' | 'center' | 'right') => {
     const file = e.target.files?.[0]
     if (file) {
@@ -84,7 +104,7 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
         Kurban Kartı Yazdır
       </DialogTrigger>
       
-      <DialogContent className="w-[95vw] sm:max-w-[900px] max-h-[95vh] overflow-y-auto flex flex-col md:flex-row gap-6 p-6">
+      <DialogContent className="w-[95vw] sm:max-w-[950px] max-h-[95vh] overflow-y-auto flex flex-col md:flex-row gap-6 p-6">
         {/* Style block for print layout isolation */}
         <style jsx global>{`
           @media print {
@@ -93,18 +113,21 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
             }
             #print-card-area, #print-card-area * {
               visibility: visible !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
             }
             #print-card-area {
               position: fixed !important;
-              left: 0 !important;
-              top: 0 !important;
-              width: 297mm !important;
-              height: 210mm !important;
+              left: 50% !important;
+              top: 50% !important;
+              transform: translate(-50%, -50%) !important;
+              width: 270mm !important;
+              height: 180mm !important;
               background: white !important;
               margin: 0 !important;
               padding: 15mm 20mm !important;
               box-shadow: none !important;
-              border: none !important;
+              border: 3px solid #000000 !important;
               display: flex !important;
               flex-direction: column !important;
               justify-content: space-between !important;
@@ -130,7 +153,7 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
             </DialogHeader>
           </div>
 
-          <div className="flex flex-col gap-3.5 border-t pt-4">
+          <div className="flex flex-col gap-3.5 border-t pt-4 max-h-[55vh] overflow-y-auto pr-1">
             <div className="grid gap-1.5">
               <Label htmlFor="card_order" className="text-xs font-bold text-slate-500 flex items-center gap-1">
                 <Tag className="w-3.5 h-3.5" /> Kesim Sırası
@@ -172,13 +195,13 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
 
             {/* Custom Logo and Flag Upload Area */}
             <div className="flex flex-col gap-3 border-t pt-4">
-              <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Görsel Yükle / Özelleştir</span>
+              <span className="text-[11px] font-extrabold text-slate-450 uppercase tracking-widest">Görsel Yükle / Değiştir</span>
               
               <div className="grid gap-1">
                 <div className="flex justify-between items-center">
-                  <Label htmlFor="left_flag_file" className="text-[10px] font-bold text-slate-500">Sol Bayrak</Label>
+                  <Label htmlFor="left_flag_file" className="text-[10px] font-bold text-slate-500">Sol Bayrak (Çad)</Label>
                   {leftFlagImage && (
-                    <button onClick={() => handleResetImage('left')} className="text-[9px] text-red-500 font-bold hover:underline cursor-pointer bg-transparent border-0 p-0">Sıfırla</button>
+                    <button onClick={() => handleResetImage('left')} className="text-[9px] text-red-550 font-bold hover:underline cursor-pointer bg-transparent border-0 p-0">Sıfırla</button>
                   )}
                 </div>
                 <Input
@@ -192,9 +215,9 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
 
               <div className="grid gap-1">
                 <div className="flex justify-between items-center">
-                  <Label htmlFor="center_logo_file" className="text-[10px] font-bold text-slate-500">Orta Logo</Label>
+                  <Label htmlFor="center_logo_file" className="text-[10px] font-bold text-slate-500">Orta Logo (AGD)</Label>
                   {centerLogoImage && (
-                    <button onClick={() => handleResetImage('center')} className="text-[9px] text-red-500 font-bold hover:underline cursor-pointer bg-transparent border-0 p-0">Sıfırla</button>
+                    <button onClick={() => handleResetImage('center')} className="text-[9px] text-red-550 font-bold hover:underline cursor-pointer bg-transparent border-0 p-0">Sıfırla</button>
                   )}
                 </div>
                 <Input
@@ -208,9 +231,9 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
 
               <div className="grid gap-1">
                 <div className="flex justify-between items-center">
-                  <Label htmlFor="right_flag_file" className="text-[10px] font-bold text-slate-500">Sağ Bayrak</Label>
+                  <Label htmlFor="right_flag_file" className="text-[10px] font-bold text-slate-500">Sağ Bayrak (Türkiye)</Label>
                   {rightFlagImage && (
-                    <button onClick={() => handleResetImage('right')} className="text-[9px] text-red-500 font-bold hover:underline cursor-pointer bg-transparent border-0 p-0">Sıfırla</button>
+                    <button onClick={() => handleResetImage('right')} className="text-[9px] text-red-550 font-bold hover:underline cursor-pointer bg-transparent border-0 p-0">Sıfırla</button>
                   )}
                 </div>
                 <Input
@@ -219,6 +242,71 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
                   accept="image/*"
                   onChange={(e) => handleImageUpload(e, 'right')}
                   className="text-[10px] h-8 cursor-pointer file:text-[10px] file:font-semibold"
+                />
+              </div>
+            </div>
+
+            {/* Logo and Flag Size Settings */}
+            <div className="flex flex-col gap-3 border-t pt-4">
+              <span className="text-[11px] font-extrabold text-slate-450 uppercase tracking-widest">Logo & Bayrak Boyutları</span>
+              
+              <div className="grid gap-1">
+                <Label htmlFor="left_flag_size" className="text-[10px] font-bold text-slate-500 flex justify-between">
+                  <span>Sol Bayrak Genişliği</span>
+                  <span className="text-blue-650">{leftFlagSize}px</span>
+                </Label>
+                <input
+                  id="left_flag_size"
+                  type="range"
+                  min="20"
+                  max="100"
+                  value={leftFlagSize}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setLeftFlagSize(val)
+                    localStorage.setItem('kurban_card_left_size', val)
+                  }}
+                  className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                />
+              </div>
+
+              <div className="grid gap-1">
+                <Label htmlFor="center_logo_size" className="text-[10px] font-bold text-slate-500 flex justify-between">
+                  <span>Orta Logo Genişliği</span>
+                  <span className="text-blue-650">{centerLogoSize}px</span>
+                </Label>
+                <input
+                  id="center_logo_size"
+                  type="range"
+                  min="20"
+                  max="120"
+                  value={centerLogoSize}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setCenterLogoSize(val)
+                    localStorage.setItem('kurban_card_center_size', val)
+                  }}
+                  className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                />
+              </div>
+
+              <div className="grid gap-1">
+                <Label htmlFor="right_flag_size" className="text-[10px] font-bold text-slate-500 flex justify-between">
+                  <span>Sağ Bayrak Genişliği</span>
+                  <span className="text-blue-650">{rightFlagSize}px</span>
+                </Label>
+                <input
+                  id="right_flag_size"
+                  type="range"
+                  min="20"
+                  max="100"
+                  value={rightFlagSize}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setRightFlagSize(val)
+                    localStorage.setItem('kurban_card_right_size', val)
+                  }}
+                  className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                 />
               </div>
             </div>
@@ -243,26 +331,38 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
           >
             {/* Top Row: Flags and AGD Logo */}
             <div className="flex items-center justify-between w-full border-b-2 border-slate-100 pb-3">
-              {/* Left Flag (Chad Flag or Custom Image) */}
-              <div className="w-12 h-12 rounded-full overflow-hidden flex border border-slate-200 shadow-sm shrink-0 items-center justify-center bg-slate-50">
+              {/* Left Flag (Chad Flag SVG or Custom Image) */}
+              <div 
+                className="rounded-full overflow-hidden flex border border-slate-200 shadow-sm shrink-0 items-center justify-center bg-slate-50"
+                style={{ width: leftFlagSize + 'px', height: leftFlagSize + 'px' }}
+              >
                 {leftFlagImage ? (
                   <img src={leftFlagImage} alt="Sol Bayrak" className="w-full h-full object-cover" />
                 ) : (
-                  <>
-                    <div className="flex-1 h-full bg-[#002664]"></div>
-                    <div className="flex-1 h-full bg-[#FECB00]"></div>
-                    <div className="flex-1 h-full bg-[#C60C30]"></div>
-                  </>
+                  <svg viewBox="0 0 3 2" className="w-full h-full object-cover rounded-full">
+                    <rect x="0" y="0" width="1" height="2" fill="#002664" />
+                    <rect x="1" y="0" width="1" height="2" fill="#FECB00" />
+                    <rect x="2" y="0" width="1" height="2" fill="#C60C30" />
+                  </svg>
                 )}
               </div>
               
               {/* AGD Logo / Center Logo */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 {centerLogoImage ? (
-                  <img src={centerLogoImage} alt="Orta Logo" className="w-12 h-12 object-contain" />
+                  <img 
+                    src={centerLogoImage} 
+                    alt="Orta Logo" 
+                    className="object-contain" 
+                    style={{ width: centerLogoSize + 'px', height: centerLogoSize + 'px' }}
+                  />
                 ) : (
-                  <>
-                    <svg viewBox="0 0 100 100" width="38" height="38" className="text-blue-600 fill-none stroke-current shrink-0">
+                  <div className="flex items-center gap-2">
+                    <svg 
+                      viewBox="0 0 100 100" 
+                      className="text-blue-600 fill-none stroke-current shrink-0"
+                      style={{ width: centerLogoSize + 'px', height: centerLogoSize + 'px' }}
+                    >
                       <circle cx="50" cy="50" r="45" strokeWidth="2.5" />
                       <path d="M5,50 H95 M50,5 V95" strokeWidth="1.5" />
                       <path d="M15,25 Q50,45 85,25 M15,75 Q50,55 85,75" strokeWidth="1.5" />
@@ -273,19 +373,23 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
                       <span className="text-base font-black tracking-tight text-slate-800 leading-none">AGD</span>
                       <span className="text-[5.5px] font-black uppercase tracking-widest text-slate-500 mt-0.5">ANADOLU GENÇLİK DERNEĞİ</span>
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
 
-              {/* Right Flag (Turkish Flag or Custom Image) */}
-              <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-slate-200 shadow-sm flex items-center justify-center bg-[#E30A17] relative">
+              {/* Right Flag (Turkish Flag SVG or Custom Image) */}
+              <div 
+                className="rounded-full overflow-hidden shrink-0 border border-slate-200 shadow-sm flex items-center justify-center bg-[#E30A17] relative"
+                style={{ width: rightFlagSize + 'px', height: rightFlagSize + 'px' }}
+              >
                 {rightFlagImage ? (
                   <img src={rightFlagImage} alt="Sağ Bayrak" className="w-full h-full object-cover" />
                 ) : (
-                  <svg viewBox="0 0 300 200" width="28" height="28" className="text-white fill-current">
-                    <circle cx="100" cy="100" r="50" fill="#FFF"/>
-                    <circle cx="112.5" cy="100" r="40" fill="#E30A17"/>
-                    <polygon points="145,100 128,109 134,91 118,82 138,82" fill="#FFF" transform="rotate(18 135 100)"/>
+                  <svg viewBox="0 0 100 100" className="w-full h-full object-cover rounded-full shrink-0">
+                    <circle cx="50" cy="50" r="50" fill="#E30A17" />
+                    <circle cx="43" cy="50" r="23" fill="#FFF" />
+                    <circle cx="49" cy="50" r="18.5" fill="#E30A17" />
+                    <polygon points="68,50 59,54.5 62.5,45.5 54.5,41 64.5,41" fill="#FFF" transform="rotate(18 63 50)"/>
                   </svg>
                 )}
               </div>
