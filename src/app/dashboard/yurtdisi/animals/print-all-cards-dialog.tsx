@@ -130,67 +130,60 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
       <DialogContent className="w-[95vw] sm:max-w-[950px] max-h-[95vh] overflow-y-auto flex flex-col md:flex-row gap-6 p-6">
         <style jsx global>{`
           @media print {
-            /* Hide the main application root entirely so it takes 0 space */
-            body > *:not([data-radix-portal]) {
-              display: none !important;
+            body * {
+              visibility: hidden !important;
             }
-            /* Show ONLY the Radix portal */
-            body > [data-radix-portal] {
-              display: block !important;
-              position: static !important;
+            /* Show ONLY our printable area and its contents */
+            #print-all-cards-area, #print-all-cards-area * {
+              visibility: visible !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            /* Make the printable container absolute and top-aligned */
+            #print-all-cards-area {
+              position: absolute !important;
+              left: 0 !important;
+              top: 0 !important;
+              width: 100% !important;
               height: auto !important;
-              width: auto !important;
+              display: block !important;
+              background: white !important;
+              z-index: 999999 !important;
+              margin: 0 !important;
+              padding: 0 !important;
+              border: none !important;
+              box-shadow: none !important;
+            }
+            /* Reset only the specific ancestors that wrap the print area so they don't clip the absolute container */
+            html, body {
               overflow: visible !important;
+              height: auto !important;
+              background: white !important;
             }
-            /* Hide overlay backgrounds and close buttons completely */
-            [data-radix-portal] > div[style*="pointer-events"] {
-              display: none !important;
+            .print-all-preview-container {
+              overflow: visible !important;
+              max-height: none !important;
+              height: auto !important;
+              position: static !important;
+              padding: 0 !important;
+              margin: 0 !important;
+              border: none !important;
+              background: transparent !important;
+              display: block !important;
             }
-            div[role="dialog"] button {
-              display: none !important;
-            }
-            /* Reset Radix Dialog outer structure to be a plain flow block container */
             div[role="dialog"] {
               position: static !important;
-              display: block !important;
-              width: auto !important;
-              height: auto !important;
-              max-height: none !important;
               overflow: visible !important;
+              max-height: none !important;
+              height: auto !important;
+              width: auto !important;
               transform: none !important;
               border: none !important;
               background: transparent !important;
               box-shadow: none !important;
               padding: 0 !important;
               margin: 0 !important;
-            }
-            /* Reset right column preview wrapper to a plain block container */
-            .print-all-preview-container {
               display: block !important;
-              overflow: visible !important;
-              max-height: none !important;
-              height: auto !important;
-              padding: 0 !important;
-              margin: 0 !important;
-              border: none !important;
-              background: transparent !important;
-            }
-            /* Maintain natural body page scrolling */
-            body {
-              background: white !important;
-              overflow: visible !important;
-              height: auto !important;
-            }
-            #print-all-cards-area {
-              display: block !important;
-              overflow: visible !important;
-              width: 100% !important;
-              height: auto !important;
-              position: static !important;
-              margin: 0 !important;
-              padding: 0 !important;
-              border: none !important;
-              box-shadow: none !important;
             }
             .print-card-page {
               width: 270mm !important;
