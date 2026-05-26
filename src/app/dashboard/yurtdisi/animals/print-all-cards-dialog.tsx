@@ -49,9 +49,9 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
   // Logo Size States (in pixels) with LocalStorage Persistence
   const [leftFlagSize, setLeftFlagSize] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('kurban_card_left_size') || '48'
+      return localStorage.getItem('kurban_card_left_size') || '60'
     }
-    return '48'
+    return '60'
   })
   const [centerLogoSize, setCenterLogoSize] = useState<string>(() => {
     if (typeof window !== 'undefined') {
@@ -61,9 +61,9 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
   })
   const [rightFlagSize, setRightFlagSize] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('kurban_card_right_size') || '48'
+      return localStorage.getItem('kurban_card_right_size') || '60'
     }
-    return '48'
+    return '60'
   })
 
   // Synchronize custom images & sizes if modal opens/reopens (syncs with single card dialog selections)
@@ -72,9 +72,9 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
       setLeftFlagImage(localStorage.getItem('kurban_card_left_flag'))
       setCenterLogoImage(localStorage.getItem('kurban_card_center_logo'))
       setRightFlagImage(localStorage.getItem('kurban_card_right_flag'))
-      setLeftFlagSize(localStorage.getItem('kurban_card_left_size') || '48')
+      setLeftFlagSize(localStorage.getItem('kurban_card_left_size') || '60')
       setCenterLogoSize(localStorage.getItem('kurban_card_center_size') || '42')
-      setRightFlagSize(localStorage.getItem('kurban_card_right_size') || '48')
+      setRightFlagSize(localStorage.getItem('kurban_card_right_size') || '60')
       setDistrictInput(localStorage.getItem('kurban_card_district') || '')
     }
   }
@@ -172,8 +172,8 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
 
             /* Scale up sizes for printing to look exactly like the screen preview */
             .card-left-flag {
-              width: 24mm !important;
-              height: 24mm !important;
+              width: 28mm !important;
+              height: 28mm !important;
             }
             .card-logo-container {
               display: flex !important;
@@ -200,8 +200,8 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
               color: #000000 !important;
             }
             .card-right-flag {
-              width: 24mm !important;
-              height: 24mm !important;
+              width: 28mm !important;
+              height: 28mm !important;
             }
             .card-slaughter-box {
               width: 60mm !important;
@@ -445,7 +445,7 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
                       {leftFlagImage ? (
                         <img src={leftFlagImage} alt="Sol Bayrak" className="w-full h-full object-cover" />
                       ) : (
-                        <svg viewBox="0 0 3 2" className="w-full h-full object-cover rounded-full">
+                        <svg viewBox="0 0 3 2" preserveAspectRatio="none" className="w-full h-full object-cover rounded-full">
                           <rect x="0" y="0" width="1" height="2" fill="#002664" />
                           <rect x="1" y="0" width="1" height="2" fill="#FECB00" />
                           <rect x="2" y="0" width="1" height="2" fill="#C60C30" />
@@ -480,9 +480,9 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
                       ) : (
                         <svg viewBox="0 0 100 100" className="w-full h-full object-cover rounded-full shrink-0">
                           <circle cx="50" cy="50" r="50" fill="#E30A17" />
-                          <circle cx="43" cy="50" r="23" fill="#FFF" />
-                          <circle cx="49" cy="50" r="18.5" fill="#E30A17" />
-                          <polygon points="68,50 59,54.5 62.5,45.5 54.5,41 64.5,41" fill="#FFF" transform="rotate(18 63 50)"/>
+                          <circle cx="41" cy="50" r="28" fill="#FFF" />
+                          <circle cx="48.5" cy="50" r="22.5" fill="#E30A17" />
+                          <polygon points="70,50 58,56 62,44 52,38 65,38" fill="#FFF" transform="rotate(18 63 50)"/>
                         </svg>
                       )}
                     </div>
