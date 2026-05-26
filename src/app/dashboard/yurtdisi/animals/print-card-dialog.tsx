@@ -30,6 +30,15 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
     return ''
   })
 
+  // Auto District State with LocalStorage Persistence
+  const [autoDistrict, setAutoDistrict] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('kurban_card_auto_district')
+      return stored !== 'false' // default to true
+    }
+    return true
+  })
+
   // Custom Logo and Flag Upload States with LocalStorage Persistence
   const [leftFlagImage, setLeftFlagImage] = useState<string | null>(() => {
     if (typeof window !== 'undefined') {
@@ -102,6 +111,50 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
       setRightFlagImage(null)
       localStorage.removeItem('kurban_card_right_flag')
     }
+  }
+
+  const getAnimalDistrictName = (animal: any) => {
+    if (!autoDistrict && districtInput) {
+      return districtInput
+    }
+    
+    const shares = animal.shares || []
+    if (shares.length === 0) return 'ESENYURT'
+    
+    const normalizeRef = (ref: string) => {
+      if (!ref) return ''
+      return ref
+        .replace(/İ/g, 'i')
+        .replace(/I/g, 'ı')
+        .replace(/ı/g, 'i')
+        .replace(/ö/g, 'o')
+        .replace(/Ö/g, 'o')
+        .replace(/ü/g, 'u')
+        .replace(/Ü/g, 'u')
+        .replace(/ç/g, 'c')
+        .replace(/Ç/g, 'c')
+        .replace(/ş/g, 's')
+        .replace(/Ş/g, 's')
+        .toLowerCase()
+        .trim()
+    }
+    
+    const refs = shares.map((s: any) => normalizeRef(s.reference_name || ''))
+    
+    // Rule 1: All shareholders SANCAKTEPE AGD
+    const allSancaktepe = shares.length > 0 && refs.every((r: string) => r.includes('sancaktepe'))
+    if (allSancaktepe) return 'SANCAKTEPE'
+    
+    // Rule 2: Sultanbeyli AGD reference exists
+    const hasSultanbeyli = refs.some((r: string) => r.includes('sultanbeyli'))
+    if (hasSultanbeyli) return 'SULTANBEYLİ'
+    
+    // Rule 3: Beykoz AGD reference exists
+    const hasBeykoz = refs.some((r: string) => r.includes('beykoz'))
+    if (hasBeykoz) return 'BEYKOZ'
+    
+    // Rule 4: Default ESENYURT
+    return 'ESENYURT'
   }
 
   const handlePrint = () => {
@@ -190,9 +243,15 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
             .card-slaughter-number {
               font-size: 64pt !important;
               font-weight: 900 !important;
+              word-break: normal !important;
+              overflow-wrap: normal !important;
+              white-space: nowrap !important;
             }
             .print-fs-3digit {
               font-size: 44pt !important;
+              word-break: normal !important;
+              overflow-wrap: normal !important;
+              white-space: nowrap !important;
             }
             .card-slaughter-label {
               font-size: 10pt !important;
@@ -259,7 +318,24 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
                 }}
                 placeholder="Örn: BAŞAKŞEHİR ŞUBESİ"
                 className="font-bold text-slate-800 uppercase"
+                disabled={autoDistrict}
               />
+              <div className="flex items-center gap-2 mt-1 select-none">
+                <input
+                  type="checkbox"
+                  id="card_auto_district"
+                  checked={autoDistrict}
+                  onChange={(e) => {
+                    const checked = e.target.checked
+                    setAutoDistrict(checked)
+                    localStorage.setItem('kurban_card_auto_district', String(checked))
+                  }}
+                  className="w-4 h-4 text-blue-600 border-slate-350 rounded focus:ring-blue-500 accent-blue-600 cursor-pointer"
+                />
+                <Label htmlFor="card_auto_district" className="text-[11px] font-bold text-slate-650 cursor-pointer">
+                  Otomatik İlçe Tespiti (Referansa Göre)
+                </Label>
+              </div>
             </div>
 
             <div className="grid gap-1.5">
@@ -434,13 +510,17 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
                   className="card-center-logo object-contain"
                   style={{ height: centerLogoSize + 'px' }}
                 />
-                {districtInput && (
-                  <div className="card-district-container flex flex-col justify-center border-l border-slate-350 pl-2">
-                    <span className="card-district-text text-[10px] font-black uppercase tracking-wider text-slate-800 leading-none">
-                      {districtInput}
-                    </span>
-                  </div>
-                )}
+                {(() => {
+                  const distName = getAnimalDistrictName(animal)
+                  if (!distName) return null
+                  return (
+                    <div className="card-district-container flex flex-col justify-center border-l border-slate-350 pl-2">
+                      <span className="card-district-text text-[10px] font-black uppercase tracking-wider text-slate-800 leading-none">
+                        {distName}
+                      </span>
+                    </div>
+                  )
+                })()}
               </div>
 
               {/* Right Flag (Turkish Flag SVG or Custom Image) */}
@@ -465,8 +545,8 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
             <div className="flex-1 flex gap-5 mt-4">
               {/* Left Column: Slaughter Order Box */}
               <div className="card-slaughter-box w-[120px] border-[3px] border-black p-2 flex flex-col justify-between items-center text-center rounded-[16px] shrink-0">
-                <div className="flex-1 flex items-center justify-center">
-                  <span className={`card-slaughter-number ${isThreeDigits ? 'text-[42px] print-fs-3digit' : 'text-[64px]'} font-black text-black tracking-tighter uppercase leading-none whitespace-nowrap`}>
+                <div className="flex-1 w-full flex items-center justify-center">
+                  <span className={`card-slaughter-number ${isThreeDigits ? 'text-[42px] print-fs-3digit' : 'text-[64px]'} font-black text-black tracking-tighter uppercase leading-none whitespace-nowrap break-normal`}>
                     {slaughterNumber}
                   </span>
                 </div>
