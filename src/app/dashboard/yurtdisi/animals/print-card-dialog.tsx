@@ -18,6 +18,14 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
   const [slaughterOrder, setSlaughterOrder] = useState('1')
   const [yearInput, setYearInput] = useState(String(campaignYear || new Date().getFullYear()))
   const [regionInput, setRegionInput] = useState('AFRİKA-ÇAD')
+  
+  // District/Branch Name with LocalStorage Persistence
+  const [districtInput, setDistrictInput] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('kurban_card_district') || ''
+    }
+    return ''
+  })
 
   // Custom Logo and Flag Upload States with LocalStorage Persistence
   const [leftFlagImage, setLeftFlagImage] = useState<string | null>(() => {
@@ -48,9 +56,9 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
   })
   const [centerLogoSize, setCenterLogoSize] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('kurban_card_center_size') || '48'
+      return localStorage.getItem('kurban_card_center_size') || '42'
     }
-    return '48'
+    return '42'
   })
   const [rightFlagSize, setRightFlagSize] = useState<string>(() => {
     if (typeof window !== 'undefined') {
@@ -143,19 +151,29 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
               width: 24mm !important;
               height: 24mm !important;
             }
+            .card-logo-container {
+              display: flex !important;
+              flex-direction: row !important;
+              align-items: center !important;
+              gap: 4mm !important;
+            }
             .card-center-logo {
-              width: 32mm !important;
-              height: 24mm !important;
+              height: 20mm !important;
+              object-fit: contain !important;
             }
-            .card-right-flag {
-              width: 24mm !important;
-              height: 24mm !important;
+            .card-district-container {
+              border-left: 2px solid #000000 !important;
+              padding-left: 3mm !important;
+              display: flex !important;
+              flex-direction: column !important;
+              justify-content: center !important;
             }
-            .card-agd-text-1 {
-              font-size: 16pt !important;
-            }
-            .card-agd-text-2 {
-              font-size: 7.5pt !important;
+            .card-district-text {
+              font-size: 13pt !important;
+              font-weight: 900 !important;
+              line-height: 1.1 !important;
+              letter-spacing: 0.05em !important;
+              color: #000000 !important;
             }
             .card-slaughter-box {
               width: 60mm !important;
@@ -218,6 +236,23 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
             </div>
 
             <div className="grid gap-1.5">
+              <Label htmlFor="card_district" className="text-xs font-bold text-slate-500 flex items-center gap-1">
+                <Globe className="w-3.5 h-3.5" /> İlçe / Şube Adı
+              </Label>
+              <Input
+                id="card_district"
+                value={districtInput}
+                onChange={(e) => {
+                  const val = e.target.value
+                  setDistrictInput(val)
+                  localStorage.setItem('kurban_card_district', val)
+                }}
+                placeholder="Örn: BAŞAKŞEHİR ŞUBESİ"
+                className="font-bold text-slate-800 uppercase"
+              />
+            </div>
+
+            <div className="grid gap-1.5">
               <Label htmlFor="card_year" className="text-xs font-bold text-slate-500 flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5" /> Kurban Yılı
               </Label>
@@ -265,22 +300,6 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
 
               <div className="grid gap-1">
                 <div className="flex justify-between items-center">
-                  <Label htmlFor="center_logo_file" className="text-[10px] font-bold text-slate-500">Orta Logo (AGD)</Label>
-                  {centerLogoImage && (
-                    <button onClick={() => handleResetImage('center')} className="text-[9px] text-red-555 font-bold hover:underline cursor-pointer bg-transparent border-0 p-0">Sıfırla</button>
-                  )}
-                </div>
-                <Input
-                  id="center_logo_file"
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageUpload(e, 'center')}
-                  className="text-[10px] h-8 cursor-pointer file:text-[10px] file:font-semibold"
-                />
-              </div>
-
-              <div className="grid gap-1">
-                <div className="flex justify-between items-center">
                   <Label htmlFor="right_flag_file" className="text-[10px] font-bold text-slate-500">Sağ Bayrak (Türkiye)</Label>
                   {rightFlagImage && (
                     <button onClick={() => handleResetImage('right')} className="text-[9px] text-red-555 font-bold hover:underline cursor-pointer bg-transparent border-0 p-0">Sıfırla</button>
@@ -322,14 +341,14 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
 
               <div className="grid gap-1">
                 <Label htmlFor="center_logo_size" className="text-[10px] font-bold text-slate-500 flex justify-between">
-                  <span>Orta Logo Genişliği</span>
+                  <span>Orta Logo Yüksekliği</span>
                   <span className="text-blue-650">{centerLogoSize}px</span>
                 </Label>
                 <input
                   id="center_logo_size"
                   type="range"
                   min="20"
-                  max="120"
+                  max="100"
                   value={centerLogoSize}
                   onChange={(e) => {
                     const val = e.target.value
@@ -398,31 +417,18 @@ export function PrintCardDialog({ animal, campaignYear, campaignName }: PrintCar
               </div>
               
               {/* AGD Logo / Center Logo */}
-              <div className="flex items-center gap-2 shrink-0">
-                {centerLogoImage ? (
-                  <img 
-                    src={centerLogoImage} 
-                    alt="Orta Logo" 
-                    className="card-center-logo object-contain" 
-                    style={{ width: centerLogoSize + 'px', height: centerLogoSize + 'px' }}
-                  />
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <svg 
-                      viewBox="0 0 100 100" 
-                      className="card-center-logo text-blue-600 fill-none stroke-current shrink-0"
-                      style={{ width: centerLogoSize + 'px', height: centerLogoSize + 'px' }}
-                    >
-                      <circle cx="50" cy="50" r="45" strokeWidth="2.5" />
-                      <path d="M5,50 H95 M50,5 V95" strokeWidth="1.5" />
-                      <path d="M15,25 Q50,45 85,25 M15,75 Q50,55 85,75" strokeWidth="1.5" />
-                      <path d="M25,15 Q45,50 25,85 M75,15 Q55,50 75,85" strokeWidth="1.5" />
-                      <path d="M58,58 A15,15 0 1,0 35,42 A12,12 0 1,1 58,58" fill="#FFF" strokeWidth="0.5" />
-                    </svg>
-                    <div className="flex flex-col text-left">
-                      <span className="card-agd-text-1 text-base font-black tracking-tight text-slate-800 leading-none">AGD</span>
-                      <span className="card-agd-text-2 text-[5.5px] font-black uppercase tracking-widest text-slate-500 mt-0.5">ANADOLU GENÇLİK DERNEĞİ</span>
-                    </div>
+              <div className="card-logo-container flex items-center gap-3 shrink-0">
+                <img 
+                  src="/agd-logo.png" 
+                  alt="AGD Logo" 
+                  className="card-center-logo object-contain"
+                  style={{ height: centerLogoSize + 'px' }}
+                />
+                {districtInput && (
+                  <div className="card-district-container flex flex-col justify-center border-l border-slate-350 pl-2">
+                    <span className="card-district-text text-[10px] font-black uppercase tracking-wider text-slate-800 leading-none">
+                      {districtInput}
+                    </span>
                   </div>
                 )}
               </div>
