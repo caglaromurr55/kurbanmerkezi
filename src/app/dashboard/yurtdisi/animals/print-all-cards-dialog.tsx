@@ -128,50 +128,69 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
       </DialogTrigger>
       
       <DialogContent className="w-[95vw] sm:max-w-[950px] max-h-[95vh] overflow-y-auto flex flex-col md:flex-row gap-6 p-6">
-        {/* Style block for print layout isolation */}
         <style jsx global>{`
           @media print {
-            * {
-              overflow: visible !important;
-              max-height: none !important;
+            /* Hide the main application root entirely so it takes 0 space */
+            body > *:not([data-radix-portal]) {
+              display: none !important;
             }
-            html, body {
+            /* Show ONLY the Radix portal */
+            body > [data-radix-portal] {
+              display: block !important;
               position: static !important;
               height: auto !important;
+              width: auto !important;
               overflow: visible !important;
             }
-            div[role="dialog"], 
-            div[role="dialog"] *, 
-            [data-radix-portal],
-            [data-radix-portal] *,
-            .fixed,
-            .fixed * {
+            /* Hide overlay backgrounds and close buttons completely */
+            [data-radix-portal] > div[style*="pointer-events"] {
+              display: none !important;
+            }
+            div[role="dialog"] button {
+              display: none !important;
+            }
+            /* Reset Radix Dialog outer structure to be a plain flow block container */
+            div[role="dialog"] {
               position: static !important;
+              display: block !important;
               width: auto !important;
               height: auto !important;
               max-height: none !important;
               overflow: visible !important;
               transform: none !important;
+              border: none !important;
+              background: transparent !important;
+              box-shadow: none !important;
+              padding: 0 !important;
+              margin: 0 !important;
             }
-            body * {
-              visibility: hidden !important;
+            /* Reset right column preview wrapper to a plain block container */
+            .print-all-preview-container {
+              display: block !important;
+              overflow: visible !important;
+              max-height: none !important;
+              height: auto !important;
+              padding: 0 !important;
+              margin: 0 !important;
+              border: none !important;
+              background: transparent !important;
             }
-            #print-all-cards-area, #print-all-cards-area * {
-              visibility: visible !important;
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
+            /* Maintain natural body page scrolling */
+            body {
+              background: white !important;
+              overflow: visible !important;
+              height: auto !important;
             }
             #print-all-cards-area {
-              position: absolute !important;
-              left: 0 !important;
-              top: 0 !important;
+              display: block !important;
+              overflow: visible !important;
               width: 100% !important;
-              background: white !important;
+              height: auto !important;
+              position: static !important;
               margin: 0 !important;
               padding: 0 !important;
-              box-shadow: none !important;
               border: none !important;
-              display: block !important;
+              box-shadow: none !important;
             }
             .print-card-page {
               width: 270mm !important;
@@ -259,7 +278,7 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
         `}</style>
 
         {/* LEFT COLUMN: Configuration */}
-        <div className="flex-1 flex flex-col gap-4 max-w-[280px]">
+        <div className="flex-1 flex flex-col gap-4 max-w-[280px] print:hidden">
           <div>
             <DialogHeader className="text-left">
               <DialogTitle className="text-xl font-bold flex items-center gap-2">
@@ -443,8 +462,8 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
         </div>
 
         {/* RIGHT COLUMN: Live Scrollable Preview of ALL Cards */}
-        <div className="flex-1 bg-slate-100/60 p-4 rounded-xl border border-slate-200/50 flex flex-col gap-6 items-center max-h-[80vh] overflow-y-auto">
-          <span className="text-xs font-extrabold text-slate-400 uppercase tracking-widest self-start px-2">Toplu Baskı Önizlemesi ({animals.length} Kart)</span>
+        <div className="print-all-preview-container flex-1 bg-slate-100/60 p-4 rounded-xl border border-slate-200/50 flex flex-col gap-6 items-center max-h-[80vh] overflow-y-auto">
+          <span className="text-xs font-extrabold text-slate-400 uppercase tracking-widest self-start px-2 print:hidden">Toplu Baskı Önizlemesi ({animals.length} Kart)</span>
           
           <div id="print-all-cards-area" className="flex flex-col gap-6 w-full items-center">
             {animals.map((animal, cardIdx) => {
