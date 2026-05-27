@@ -151,19 +151,28 @@ export function PrintAllCardsDialog({ animals, campaignYear }: PrintAllCardsDial
     
     const refs = shares.map((s: any) => normalizeRef(s.reference_name || ''))
     
-    // Rule 1: All shareholders SANCAKTEPE AGD
+    const hasSancaktepe = refs.some((r: string) => r.includes('sancaktepe'))
+    const hasSultanbeyli = refs.some((r: string) => r.includes('sultanbeyli'))
+    const hasBeykoz = refs.some((r: string) => r.includes('beykoz'))
+    
+    // Rule 1: If ALL shares belong to SANCAKTEPE AGD
     const allSancaktepe = shares.length > 0 && refs.every((r: string) => r.includes('sancaktepe'))
     if (allSancaktepe) return 'SANCAKTEPE'
     
-    // Rule 2: Sultanbeyli AGD reference exists
-    const hasSultanbeyli = refs.some((r: string) => r.includes('sultanbeyli'))
-    if (hasSultanbeyli) return 'SULTANBEYLİ'
+    // Rule 2: If ALL shares belong to SULTANBEYLİ AGD
+    const allSultanbeyli = shares.length > 0 && refs.every((r: string) => r.includes('sultanbeyli'))
+    if (allSultanbeyli) return 'SULTANBEYLİ'
     
-    // Rule 3: Beykoz AGD reference exists
-    const hasBeykoz = refs.some((r: string) => r.includes('beykoz'))
-    if (hasBeykoz) return 'BEYKOZ'
+    // Rule 3: If ALL shares belong to BEYKOZ AGD
+    const allBeykoz = shares.length > 0 && refs.every((r: string) => r.includes('beykoz'))
+    if (allBeykoz) return 'BEYKOZ'
     
-    // Rule 4: Default ESENYURT
+    // Rule 4: If it is a mixed animal containing at least one of these three districts
+    if (hasSancaktepe || hasSultanbeyli || hasBeykoz) {
+      return ''
+    }
+    
+    // Rule 5: If none of those three districts are present at all
     return 'ESENYURT'
   }
 
